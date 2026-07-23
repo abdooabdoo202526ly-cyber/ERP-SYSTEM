@@ -2,7 +2,7 @@
 
 // صفحة تفاصيل دفعة — معلومات + allocations + أزرار Post/Allocate
 
-import { useEffect, useState, useCallback, use } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { ArrowRight, Send, Plus, FileText, CreditCard } from 'lucide-react';
 import { Button, Badge, Card, PageHeader, Input, Select, Modal } from '@/components/ui';
@@ -21,8 +21,8 @@ import {
 import { formatDate } from '@/lib/utils';
 import { formatNumber } from '@/lib/format';
 
-export default function PaymentDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+export default function PaymentDetailPage({ params }: { params: { id: string } }) {
+  const { id } = params;
   const [payment, setPayment] = useState<Payment | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
