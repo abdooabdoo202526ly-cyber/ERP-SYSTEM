@@ -1,0 +1,57 @@
+using ERPSystem.Modules.Finance.Entities;
+
+namespace ERPSystem.Shared.SeedData;
+
+public static class DefaultCoASeed
+{
+    public static readonly (string Code, string Name, AccountType Type, string? ParentCode, bool Postable, bool Intercompany)[] HoldingAccounts =
+    {
+        ("0000", "حسابات المجموعة القابضة (الإدارة العامة)", AccountType.Equity, null, false, false),
+        ("1000", "الأصول", AccountType.Asset, null, false, false),
+        ("1100", "أصول غير متداولة", AccountType.Asset, "1000", false, false),
+        ("1101", "العقارات", AccountType.Asset, "1100", true, false),
+        ("1102", "المركبات والأثاث", AccountType.Asset, "1100", true, false),
+        ("1103", "أصول ثابتة أخرى", AccountType.Asset, "1100", true, false),
+        ("1200", "أصول متداولة", AccountType.Asset, "1000", false, false),
+        ("1210", "النقدية", AccountType.Asset, "1200", true, false),
+        ("1220", "مدينون من شركات شقيقة", AccountType.Asset, "1200", false, true),
+        ("1221", "مدينون - شركة المقاولات", AccountType.Asset, "1220", true, true),
+        ("1222", "مدينون - شركة النظافة", AccountType.Asset, "1220", true, true),
+        ("1223", "مدينون - شركة الإعاشة", AccountType.Asset, "1220", true, true),
+        ("1230", "ذمم مدينة (عملاء خارجيين)", AccountType.Asset, "1200", true, false),
+        ("1240", "مخزون", AccountType.Asset, "1200", true, false),
+        ("1250", "مصروفات مقدمة", AccountType.Asset, "1200", true, false),
+        ("2000", "الالتزامات", AccountType.Liability, null, false, false),
+        ("2100", "التزامات غير متداولة", AccountType.Liability, "2000", false, false),
+        ("2200", "التزامات متداولة", AccountType.Liability, "2000", false, false),
+        ("2210", "دائنون لموردين خارجيين", AccountType.Liability, "2200", true, false),
+        ("2220", "دائنون لشركات شقيقة", AccountType.Liability, "2200", false, true),
+        ("2221", "دائنون - شركة المقاولات", AccountType.Liability, "2220", true, true),
+        ("2222", "دائنون - شركة النظافة", AccountType.Liability, "2220", true, true),
+        ("2223", "دائنون - شركة الإعاشة", AccountType.Liability, "2220", true, true),
+        ("2230", "إيرادات مقبوضة مقدماً", AccountType.Liability, "2200", true, false),
+        ("3000", "حقوق الملكية", AccountType.Equity, null, false, false),
+        ("3100", "رأس المال", AccountType.Equity, "3000", true, false),
+        ("3200", "أرباح محتجزة", AccountType.Equity, "3000", true, false),
+        ("3300", "احتياطيات", AccountType.Equity, "3000", true, false),
+        ("4000", "المصروفات", AccountType.Expense, null, false, false),
+        ("4100", "مصروفات النشاط الجاري", AccountType.Expense, "4000", false, false),
+        ("4110", "تكلفة المبيعات/المشاريع", AccountType.Expense, "4100", false, false),
+        ("4111", "مواد مباشرة", AccountType.Expense, "4110", true, false),
+        ("4112", "أجور مباشرة", AccountType.Expense, "4110", true, false),
+        ("4113", "مقاولي الباطن", AccountType.Expense, "4110", true, false),
+        ("4114", "تخصيص مصروفات غير مباشرة", AccountType.Expense, "4110", true, false),
+        ("4200", "مصروفات إدارية وعمومية", AccountType.Expense, "4000", true, false),
+        ("4300", "مصروفات تمويلية", AccountType.Expense, "4000", true, false),
+        ("4400", "مصروفات بين شركات", AccountType.Expense, "4000", false, true),
+        ("4410", "خدمات من شركات شقيقة", AccountType.Expense, "4400", true, true),
+        ("4420", "رسوم إدارية", AccountType.Expense, "4400", true, true),
+        ("5000", "الإيرادات", AccountType.Revenue, null, false, false),
+        ("5100", "إيرادات خارجية", AccountType.Revenue, "5000", false, false),
+        ("5110", "إيرادات المشاريع", AccountType.Revenue, "5100", true, false),
+        ("5120", "إيرادات خدمات", AccountType.Revenue, "5100", true, false),
+        ("5200", "إيرادات داخلية", AccountType.Revenue, "5000", false, true),
+        ("5210", "إيرادات من شركات شقيقة", AccountType.Revenue, "5200", true, true),
+        ("5220", "إيرادات تخصيص تكاليف", AccountType.Revenue, "5200", true, true),
+    };
+}

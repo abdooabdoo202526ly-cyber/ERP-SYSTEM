@@ -1,0 +1,25 @@
+{
+  "name": "OutboxEvent",
+  "table": "outbox_events",
+  "version": "1.0.0",
+  "module": "Shared",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "tenant_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "tenants", "column": "id", "on_delete": "cascade" } },
+    { "name": "event_type", "type": "varchar(100)", "nullable": false },
+    { "name": "aggregate_id", "type": "uuid", "nullable": false },
+    { "name": "aggregate_type", "type": "varchar(50)", "nullable": false },
+    { "name": "payload", "type": "text", "nullable": false },
+    { "name": "occurred_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "processed_at", "type": "timestamptz", "nullable": true },
+    { "name": "retry_count", "type": "integer", "nullable": false, "default": "0" },
+    { "name": "max_retries", "type": "integer", "nullable": false, "default": "3" },
+    { "name": "last_error", "type": "text", "nullable": true }
+  ],
+  "indexes": [
+    { "name": "ix_outbox_unprocessed", "columns": ["occurred_at"] },
+    { "name": "ix_outbox_tenant_type", "columns": ["tenant_id", "event_type"] },
+    { "name": "ix_outbox_processed_at", "columns": ["processed_at"] }
+  ]
+}

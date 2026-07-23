@@ -1,0 +1,26 @@
+{
+  "name": "Warehouse",
+  "table": "warehouses",
+  "version": "1.0.0",
+  "module": "Inventory",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "tenant_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "tenants", "column": "id", "on_delete": "cascade" } },
+    { "name": "company_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "companies", "column": "id", "on_delete": "restrict" } },
+    { "name": "code", "type": "varchar(50)", "nullable": false },
+    { "name": "name", "type": "varchar(200)", "nullable": false },
+    { "name": "location", "type": "varchar(500)", "nullable": true },
+    { "name": "manager_user_id", "type": "uuid", "nullable": true },
+    { "name": "is_active", "type": "boolean", "nullable": false, "default": "true" },
+    { "name": "created_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "created_by", "type": "uuid", "nullable": false },
+    { "name": "updated_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "updated_by", "type": "uuid", "nullable": true }
+  ],
+  "indexes": [
+    { "name": "ix_warehouses_tenant_code", "columns": ["tenant_id", "code"], "unique": true },
+    { "name": "ix_warehouses_tenant_company_active", "columns": ["tenant_id", "company_id", "is_active"] }
+  ]
+}

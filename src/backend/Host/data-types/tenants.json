@@ -1,0 +1,17 @@
+{
+  "name": "Tenant",
+  "table": "tenants",
+  "version": "1.0.0",
+  "module": "Identity",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "name", "type": "varchar(200)", "nullable": false },
+    { "name": "subdomain", "type": "varchar(100)", "nullable": false },
+    { "name": "is_active", "type": "boolean", "nullable": false, "default": "true" },
+    { "name": "created_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "subscription_expires_at", "type": "timestamptz", "nullable": true }
+  ],
+  "indexes": [
+    { "name": "ix_tenants_subdomain", "columns": ["subdomain"], "unique": true }
+  ]
+}

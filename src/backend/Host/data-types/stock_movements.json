@@ -1,0 +1,42 @@
+{
+  "name": "StockMovement",
+  "table": "stock_movements",
+  "version": "1.0.0",
+  "module": "Inventory",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "tenant_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "tenants", "column": "id", "on_delete": "cascade" } },
+    { "name": "company_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "companies", "column": "id", "on_delete": "restrict" } },
+    { "name": "reference", "type": "varchar(50)", "nullable": false },
+    { "name": "type", "type": "integer", "nullable": false },
+    { "name": "movement_date", "type": "timestamptz", "nullable": false },
+    { "name": "item_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "items", "column": "id", "on_delete": "restrict" } },
+    { "name": "warehouse_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "warehouses", "column": "id", "on_delete": "restrict" } },
+    { "name": "quantity", "type": "numeric(18,4)", "nullable": false },
+    { "name": "unit_cost", "type": "numeric(18,4)", "nullable": false, "default": "0" },
+    { "name": "project_id", "type": "uuid", "nullable": true,
+      "foreign_key": { "table": "projects", "column": "id", "on_delete": "set_null" } },
+    { "name": "cost_center_id", "type": "uuid", "nullable": true,
+      "foreign_key": { "table": "cost_centers", "column": "id", "on_delete": "set_null" } },
+    { "name": "destination_warehouse_id", "type": "uuid", "nullable": true,
+      "foreign_key": { "table": "warehouses", "column": "id", "on_delete": "set_null" } },
+    { "name": "source_type", "type": "varchar(50)", "nullable": true },
+    { "name": "source_id", "type": "uuid", "nullable": true },
+    { "name": "notes", "type": "text", "nullable": true },
+    { "name": "status", "type": "integer", "nullable": false, "default": "1" },
+    { "name": "created_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "created_by", "type": "uuid", "nullable": false },
+    { "name": "posted_at", "type": "timestamptz", "nullable": true },
+    { "name": "reversed_by_movement_id", "type": "uuid", "nullable": true }
+  ],
+  "indexes": [
+    { "name": "ix_stock_movements_tenant_status_date", "columns": ["tenant_id", "status", "movement_date"] },
+    { "name": "ix_stock_movements_tenant_item_warehouse", "columns": ["tenant_id", "item_id", "warehouse_id"] },
+    { "name": "ix_stock_movements_tenant_reference", "columns": ["tenant_id", "source_type", "source_id"] },
+    { "name": "ix_stock_movements_tenant_company", "columns": ["tenant_id", "company_id"] }
+  ]
+}

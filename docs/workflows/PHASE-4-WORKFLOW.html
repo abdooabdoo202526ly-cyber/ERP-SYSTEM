@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Git Workflow + Phase 4 Scenario — ERP-SYSTEM</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f5f0;
+    --card: #ffffff;
+    --line: #e9e3d6;
+    --line-soft: rgba(47,111,94,0.10);
+    --text: #14171e;
+    --muted: #7c7a72;
+    --primary: #2f6f5e;
+    --primary-2: #c97b3f;
+    --danger: #b06367;
+    --info: #1e40af;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Outfit', 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100dvh;
+    background-image:
+      radial-gradient(circle at 95% 5%, rgba(201,123,63,0.06), transparent 40%),
+      radial-gradient(circle at 5% 95%, rgba(47,111,94,0.05), transparent 40%);
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 56px 24px 80px; }
+  h1, h2, h3, h4 { font-family: 'DM Serif Display', serif; font-weight: 400; letter-spacing: -0.005em; }
+  h1 { font-size: clamp(2rem, 4vw, 3rem); margin: 0 0 12px; line-height: 1.1; }
+  h2 { font-size: clamp(1.5rem, 2.6vw, 2rem); margin: 56px 0 18px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+  h3 { font-size: 1.3rem; margin: 24px 0 12px; color: var(--primary); }
+  h4 { font-size: 1.05rem; margin: 16px 0 8px; color: var(--primary); font-family: 'Outfit', sans-serif; font-weight: 600; }
+  p { margin: 0 0 12px; }
+  .meta { color: var(--muted); font-size: 0.92rem; display: flex; gap: 18px; flex-wrap: wrap; margin-bottom: 32px; }
+  .meta strong { color: var(--text); }
+  section { margin-bottom: 56px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 28px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 768px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    .wrap { padding: 32px 16px 60px; }
+  }
+  .tag { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 0.78rem; font-weight: 500; margin-right: 6px; }
+  .tag-green { background: rgba(47,111,94,0.12); color: var(--primary); }
+  .tag-orange { background: rgba(201,123,63,0.12); color: var(--primary-2); }
+  .tag-red { background: rgba(176,99,103,0.12); color: var(--danger); }
+  .tag-blue { background: rgba(30,64,175,0.10); color: var(--info); }
+  code, .mono { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: rgba(47,111,94,0.06); padding: 1px 6px; border-radius: 4px; color: var(--text); }
+  pre { background: #1a1a1a; color: #d4d4d4; padding: 16px 18px; border-radius: 10px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; line-height: 1.6; margin: 14px 0; }
+  pre .c { color: #6b7280; }
+  pre .k { color: #c084fc; }
+  pre .s { color: #86efac; }
+  pre .n { color: #f59e0b; }
+  ol.timeline { list-style: none; padding: 0; margin: 16px 0; position: relative; counter-reset: step; }
+  ol.timeline::before { content: ""; position: absolute; right: 14px; top: 6px; bottom: 6px; width: 2px; background: var(--primary); opacity: .3; }
+  ol.timeline li { position: relative; padding: 0 48px 24px 0; counter-increment: step; }
+  ol.timeline li::before { content: counter(step); position: absolute; right: 0; top: 0; width: 30px; height: 30px; border-radius: 50%; background: white; border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; font-weight: 600; color: var(--primary); }
+  ol.timeline li strong { display: block; margin-bottom: 6px; font-size: 1.05rem; color: var(--text); }
+  ol.timeline li p { margin: 0; color: var(--muted); font-size: 0.93rem; }
+  .step-action { margin-top: 8px; padding: 10px 14px; background: rgba(47,111,94,0.05); border-right: 3px solid var(--primary); border-radius: 0 6px 6px 0; font-size: 0.85rem; }
+  .step-action code { background: white; }
+  .compare-table { width: 100%; border-collapse: collapse; }
+  .compare-table th, .compare-table td { padding: 12px 14px; text-align: right; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .compare-table th { background: rgba(47,111,94,0.06); font-weight: 600; font-size: 0.9rem; }
+  .compare-table td:first-child { font-weight: 500; }
+  .diagram { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px; overflow-x: auto; margin: 16px 0; }
+  .branch-col { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px; margin-bottom: 16px; }
+  .branch-col h4 { display: flex; align-items: center; gap: 8px; margin-top: 0; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; }
+  .pill-default { background: rgba(47,111,94,0.15); color: var(--primary); }
+  .pill-prod { background: rgba(201,123,63,0.15); color: var(--primary-2); }
+  .commit-list { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; padding: 0; margin: 12px 0 0; list-style: none; }
+  .commit-list li { padding: 6px 10px; border-right: 3px solid var(--line); margin-bottom: 4px; color: var(--muted); background: rgba(47,111,94,0.03); border-radius: 0 6px 6px 0; }
+  .commit-list li.head { border-right-color: var(--primary); background: rgba(47,111,94,0.10); color: var(--text); font-weight: 500; }
+  .commit-list li.merge { border-right-color: var(--primary-2); background: rgba(201,123,63,0.06); }
+  .answer-box { background: linear-gradient(135deg, rgba(47,111,94,0.06), rgba(201,123,63,0.05)); border: 1px solid var(--line); border-radius: 14px; padding: 22px 26px; margin: 18px 0; }
+  .answer-box strong { color: var(--primary); }
+  .quote { border-right: 3px solid var(--primary-2); padding: 12px 18px; background: rgba(201,123,63,0.05); border-radius: 0 8px 8px 0; color: var(--muted); font-style: italic; margin: 14px 0; }
+  .nav { position: sticky; top: 0; background: rgba(247,245,240,0.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); padding: 12px 24px; z-index: 50; }
+  .nav-inner { max-width: 1080px; margin: 0 auto; display: flex; gap: 20px; flex-wrap: wrap; align-items: center; font-size: 0.86rem; }
+  .nav-inner a { color: var(--muted); text-decoration: none; padding: 4px 0; border-bottom: 2px solid transparent; }
+  .nav-inner a:hover { color: var(--primary); border-bottom-color: var(--primary); }
+  .toc-title { font-family: 'DM Serif Display', serif; color: var(--text); font-size: 1.1rem; margin-left: auto; }
+  .footnote { color: var(--muted); font-size: 0.85rem; font-style: italic; }
+  .checklist { list-style: none; padding: 0; margin: 14px 0; }
+  .checklist li { padding: 8px 14px 8px 36px; position: relative; margin-bottom: 6px; border-radius: 8px; background: rgba(47,111,94,0.04); border: 1px solid var(--line-soft); font-size: 0.92rem; }
+  .checklist li::before { content: "✓"; position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; }
+  .hero-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 32px 0; }
+  @media (max-width: 768px) {
+    .hero-stats { grid-template-columns: repeat(2, 1fr); }
+  }
+  .stat-card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px; text-align: center; }
+  .stat-card .num { font-family: 'DM Serif Display', serif; font-size: 2.2rem; color: var(--primary); display: block; }
+  .stat-card .label { color: var(--muted); font-size: 0.85rem; margin-top: 4px; }
+  .warning-box { background: rgba(176,99,103,0.05); border: 1px solid rgba(176,99,103,0.2); border-right: 4px solid var(--danger); border-radius: 10px; padding: 16px 18px; margin: 14px 0; }
+  .warning-box strong { color: var(--danger); }
+  .success-box { background: rgba(47,111,94,0.05); border: 1px solid rgba(47,111,94,0.2); border-right: 4px solid var(--primary); border-radius: 10px; padding: 16px 18px; margin: 14px 0; }
+  footer { margin-top: 80px; padding-top: 32px; border-top: 1px solid var(--line); text-align: center; color: var(--muted); font-size: 0.88rem; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <span class="toc-title">Git Workflow</span>
+    <a href="#squash">Squash</a>
+    <a href="#branches">الفروع</a>
+    <a href="#phase4">Phase 4</a>
+    <a href="#workers">الوكلاء</a>
+    <a href="#commands">الأوامر</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- ============ HERO ============ -->
+  <header>
+    <h1>Git Workflow + Phase 4</h1>
+    <p style="font-size: 1.05rem; color: var(--muted); margin-bottom: 8px;">دليل عملي كامل: لماذا Squash Merge، خريطة الفروع، سيناريو Phase 4، كيف يتعامل الفريق</p>
+    <p class="meta">
+      <span>📅 <strong>التاريخ:</strong> 2026-06-24</span>
+      <span>🌿 <strong>المشروع:</strong> ERP-SYSTEM</span>
+      <span>👤 <strong>المنسق:</strong> Mavis (m3) + الفريق</span>
+      <span>🔀 <strong>Merge Strategy:</strong> Squash ✅</span>
+    </p>
+
+    <div class="hero-stats">
+      <div class="stat-card"><span class="num">10</span><span class="label">commits على main</span></div>
+      <div class="stat-card"><span class="num">47</span><span class="label">commits على develop</span></div>
+      <div class="stat-card"><span class="num">3-4</span><span class="label">أسابيع Phase 4</span></div>
+      <div class="stat-card"><span class="num">3</span><span class="label">feature branches متوقعة</span></div>
+    </div>
+
+    <div class="answer-box">
+      <strong>✅ تأكيد على PR #10:</strong> تم قبوله ودمجه بـ <strong>Squash Merge</strong> على <code>main</code>. الـ 12 commits من <code>develop</code> تم ضغطها في commit واحد (<code>e7d191b</code>). النتيجة: main عنده 10 commits فقط، develop عنده 47 commits.
+    </div>
+  </header>
+
+  <!-- ============ SECTION 1: SQUASH ============ -->
+  <section id="squash">
+    <h2>1. ليش اخترنا Squash Merge؟</h2>
+
+    <p>Squash Merge يأخذ كل commits الـ feature branch ويضغطها في <strong>commit واحد</strong> على الفرع الهدف. هذا يحافظ على <strong>تاريخ نظيف على main</strong> (production) دون pollution من commits العمل الداخلي.</p>
+
+    <h3>المقارنة المرئية بين 3 استراتيجيات</h3>
+    <div class="diagram">
+      <svg viewBox="0 0 960 360" xmlns="http://www.w3.org/2000/svg" style="width:100%; max-width:960px;">
+        <text x="480" y="22" text-anchor="middle" font-family="DM Serif Display, serif" font-size="16" fill="#14171e">3 استراتيجيات دمج: Squash ✅ vs Merge vs Rebase</text>
+
+        <!-- SQUASH COLUMN -->
+        <text x="160" y="50" text-anchor="middle" font-family="Outfit, sans-serif" font-weight="700" fill="#2f6f5e" font-size="14">Squash Merge ✅</text>
+        <text x="160" y="66" text-anchor="middle" font-family="Outfit, sans-serif" fill="#7c7a72" font-size="10">12 commits → 1 commit</text>
+        <!-- before -->
+        <line x1="60" y1="100" x2="260" y2="100" stroke="#2f6f5e" stroke-width="2"/>
+        <circle cx="80" cy="100" r="4" fill="#2f6f5e"/>
+        <circle cx="110" cy="100" r="4" fill="#2f6f5e"/>
+        <circle cx="140" cy="100" r="4" fill="#2f6f5e"/>
+        <circle cx="170" cy="100" r="4" fill="#2f6f5e"/>
+        <circle cx="200" cy="100" r="4" fill="#2f6f5e"/>
+        <circle cx="230" cy="100" r="4" fill="#2f6f5e"/>
+        <text x="80" y="118" text-anchor="middle" font-family="JetBrains Mono, monospace" fill="#7c7a72" font-size="8">c1</text>
+        <text x="230" y="118" text-anchor="middle" font-family="JetBrains Mono, monospace" fill="#7c7a72" font-size="8">c6</text>
+        <text x="160" y="135" text-anchor="middle" font-family="Outfit, sans-serif" fill="#7c7a72" font-size="9">feature branch (6 commits)</text>
+        <!-- arrow -->
+        <path d="M 160 145 L 160 165" stroke="#c97b3f" stroke-width="2" fill="none"/>
+        <polygon points="155,162 160,170 165,162" fill="#c97b3f"/>
+        <text x="180" y="158" font-family="Outfit, sans-serif" fill="#c97b3f" font-size="9" font-weight="600">squash</text>
+        <!-- after -->
+        <line x1="60" y1="190" x2="260" y2="190" stroke="#c97b3f" stroke-width="3"/>
+        <circle cx="160" cy="190" r="9" fill="#c97b3f"/>
+        <text x="160" y="213" text-anchor="middle" font-family="JetBrains Mono, monospace" fill="#c97b3f" font-size="9" font-weight="600">squash(1)</text>
+        <text x="160" y="232" text-anchor="middle" font-family="Outfit, sans-serif" fill="#7c7a72" font-size="9">main: 1 commit جديد</text>
+        <text x="160" y="252" text-anchor="middle" font-family="Outfit, sans-serif" fill="#2f6f5e" font-size="10" font-weight="600">✓ main نظيف</text>
+
+        <!-- MERGE COLUMN -->
+        <text x="480" y="50" text-anchor="middle" font-family="Outfit, sans-serif" font-weight="700" fill="#1e40af" font-size="14">Merge Commit</text>
+        <text x="480" y="66" text-anchor="middle" font-family="Outfit, sans-serif" fill="#7c7a72" font-size="10">12 commits → 13 commits</text>
+        <line x1="380" y1="100" x2="580" y2="100" stroke="#2f6f5e" stroke-width="2"/>
+        <circle cx="400" cy="100" r="4" fill="#2f6f5e"/>
+        <circle cx="430" cy="100" r="4" fill="#2f6f5e"/>
+        <circle cx="460" cy="100" r="4" fill="#2f6f5e"/>
+        <circle cx="490" cy="100" r="4" fill="#2f6f5e"/>
+        <circle cx="520" cy="100" r="4" fill="#2f6f5e"/>
+        <circle cx="550" cy="100" r="4" fill="#2f6f5e"/>
+        <line x1="380" y1="135" x2="580" y2="135" stroke="#1e40af" stroke-width="2"/>
+        <circle cx="400" cy="135" r="4" fill="#1e40af"/>
+        <circle cx="430" cy="135" r="4" fill="#1e40af"/>
+        <circle cx="460" cy="135" r="4" fill="#1e40af"/>
+        <circle cx="490" cy="135" r="4" fill="#1e40af"/>
+        <circle cx="520" cy="135" r="4" fill="#1e40af"/>
+        <circle cx="550" cy="135" r="4" fill="#1e40af"/>
+        <line x1="430" y1="100" x2="430" y2="135" stroke="#7c7a72" stroke-width="1"/>
+        <text x="350" y="118" text-anchor="middle" font-family="Outfit, sans-serif" fill="#7c7a72" font-size="9">main</text>
+        <text x="350" y="153" text-anchor="middle" font-family="Outfit, sans-serif" fill="#7c7a72" font-size="9">feature</text>
+        <path d="M 480 145 L 480 165" stroke="#1e40af" stroke-width="2" fill="none"/>
+        <polygon points="475,162 480,170 485,162" fill="#1e40af"/>
+        <text x="500" y="158" font-family="Outfit, sans-serif" fill="#1e40af" font-size="9" font-weight="600">merge</text>
+        <line x1="380" y1="190" x2="580" y2="190" stroke="#1e40af" stroke-width="3"/>
+        <circle cx="480" cy="190" r="9" fill="#1e40af"/>
+        <text x="480" y="213" text-anchor="middle" font-family="JetBrains Mono, monospace" fill="#1e40af" font-size="9" font-weight="600">merge commit</text>
+        <text x="480" y="232" text-anchor="middle" font-family="Outfit, sans-serif" fill="#7c7a72" font-size="9">يحفظ كل commits الـ feature</text>
+        <text x="480" y="252" text-anchor="middle" font-family="Outfit, sans-serif" fill="#7c7a72" font-size="10">~ main مفصّل أكثر</text>
+
+        <!-- REBASE COLUMN -->
+        <text x="800" y="50" text-anchor="middle" font-family="Outfit, sans-serif" font-weight="700" fill="#b06367" font-size="14">Rebase + Fast-forward</text>
+        <text x="800" y="66" text-anchor="middle" font-family="Outfit, sans-serif" fill="#7c7a72" font-size="10">12 commits → 12 commits</text>
+        <line x1="700" y1="100" x2="900" y2="100" stroke="#2f6f5e" stroke-width="2"/>
+        <circle cx="720" cy="100" r="4" fill="#2f6f5e"/>
+        <circle cx="750" cy="100" r="4" fill="#2f6f5e"/>
+        <line x1="700" y1="135" x2="900" y2="135" stroke="#b06367" stroke-width="2"/>
+        <circle cx="720" cy="135" r="4" fill="#b06367"/>
+        <circle cx="750" cy="135" r="4" fill="#b06367"/>
+        <circle cx="780" cy="135" r="4" fill="#b06367"/>
+        <circle cx="810" cy="135" r="4" fill="#b06367"/>
+        <circle cx="840" cy="135" r="4" fill="#b06367"/>
+        <circle cx="870" cy="135" r="4" fill="#b06367"/>
+        <text x="670" y="118" text-anchor="middle" font-family="Outfit, sans-serif" fill="#7c7a72" font-size="9">main</text>
+        <text x="670" y="153" text-anchor="middle" font-family="Outfit, sans-serif" fill="#7c7a72" font-size="9">feature</text>
+        <path d="M 800 145 L 800 165" stroke="#b06367" stroke-width="2" fill="none"/>
+        <polygon points="795,162 800,170 805,162" fill="#b06367"/>
+        <text x="820" y="158" font-family="Outfit, sans-serif" fill="#b06367" font-size="9" font-weight="600">rebase</text>
+        <line x1="700" y1="190" x2="900" y2="190" stroke="#b06367" stroke-width="3"/>
+        <circle cx="720" cy="190" r="4" fill="#b06367"/>
+        <circle cx="750" cy="190" r="4" fill="#b06367"/>
+        <circle cx="780" cy="190" r="4" fill="#b06367"/>
+        <circle cx="810" cy="190" r="4" fill="#b06367"/>
+        <circle cx="840" cy="190" r="4" fill="#b06367"/>
+        <circle cx="870" cy="190" r="4" fill="#b06367"/>
+        <text x="800" y="213" text-anchor="middle" font-family="JetBrains Mono, monospace" fill="#b06367" font-size="9">replayed commits</text>
+        <text x="800" y="232" text-anchor="middle" font-family="Outfit, sans-serif" fill="#7c7a72" font-size="9">SHA جديد (معدّل)</text>
+        <text x="800" y="252" text-anchor="middle" font-family="Outfit, sans-serif" fill="#b06367" font-size="10">⚠ خطير على shared</text>
+
+        <!-- bottom labels -->
+        <rect x="40" y="290" width="240" height="50" fill="none" stroke="#2f6f5e" stroke-width="1"/>
+        <text x="160" y="310" text-anchor="middle" font-family="Outfit, sans-serif" font-weight="600" fill="#2f6f5e" font-size="11">main نظيف</text>
+        <text x="160" y="328" text-anchor="middle" font-family="Outfit, sans-serif" fill="#7c7a72" font-size="10">commit واحد لكل PR</text>
+
+        <rect x="360" y="290" width="240" height="50" fill="none" stroke="#7c7a72" stroke-width="1"/>
+        <text x="480" y="310" text-anchor="middle" font-family="Outfit, sans-serif" font-weight="600" fill="#14171e" font-size="11">main مفصّل</text>
+        <text x="480" y="328" text-anchor="middle" font-family="Outfit, sans-serif" fill="#7c7a72" font-size="10">يحفظ كل commits الـ feature</text>
+
+        <rect x="680" y="290" width="240" height="50" fill="none" stroke="#7c7a72" stroke-width="1"/>
+        <text x="800" y="310" text-anchor="middle" font-family="Outfit, sans-serif" font-weight="600" fill="#14171e" font-size="11">main خطي</text>
+        <text x="800" y="328" text-anchor="middle" font-family="Outfit, sans-serif" fill="#7c7a72" font-size="10">لكن commits معدّلة SHA</text>
+      </svg>
+    </div>
+
+    <h3>جدول مقارنة شامل</h3>
+    <div style="background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 0; overflow-x: auto;">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>المعيار</th>
+            <th><span class="tag tag-green">Squash ✅</span></th>
+            <th><span class="tag tag-blue">Merge Commit</span></th>
+            <th><span class="tag tag-red">Rebase</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>عدد commits على main</td><td><strong>1 لكل PR</strong></td><td>N+1</td><td>N</td></tr>
+          <tr><td>تاريخ نظيف على main</td><td>✅ نعم</td><td>❌ pollution</td><td>✅ خطي</td></tr>
+          <tr><td>rollback feature</td><td>✅ revert 1 commit</td><td>✅ revert merge</td><td>⚠ revert N commits</td></tr>
+          <tr><td>changelog واضح</td><td>✅ PR body = release note</td><td>❌ commits متفرقة</td><td>⚠ commits بدون merge</td></tr>
+          <tr><td>التاريخ التفصيلي</td><td>يبقى على develop</td><td>✅ محفوظ على main</td><td>❌ SHA يتغير</td></tr>
+          <tr><td>CI verification</td><td>✅ PR يفحص integration</td><td>✅ نفس</td><td>✅ نفس</td></tr>
+          <tr><td>الـ Co-authors</td><td>✅ في squash commit body</td><td>✅ في كل commit</td><td>✅ في كل commit</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>ليش اخترنا Squash لمشروعك؟</h3>
+    <div class="grid-2">
+      <div class="card">
+        <h4>1. أنت solo developer</h4>
+        <p>ما تحتاج commits فردية. تفضل تشوف <strong>"Phase X released"</strong> كحدث واحد في تاريخ main، بدل 12 commits داخلية.</p>
+      </div>
+      <div class="card">
+        <h4>2. main = production</h4>
+        <p>كل commit على main = <strong>release candidate</strong>. Squash يخلي الـ release notes (commit body) تحوي كل التفاصيل.</p>
+      </div>
+      <div class="card">
+        <h4>3. develop = integration lab</h4>
+        <p>التاريخ التفصيلي يبقى على develop. لو احتج تشوف commits الفردية: <code>git log origin/develop</code>.</p>
+      </div>
+      <div class="card">
+        <h4>4. Rollback سهل</h4>
+        <p>لو Phase 4 فيه bug: <code>git revert &lt;squash-commit-hash&gt;</code> يرجّع كل التغييرات في خطوة واحدة.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 2: BRANCH STATE ============ -->
+  <section id="branches">
+    <h2>2. هيكل الفروع الآن (بعد Squash)</h2>
+
+    <h3>🌿 main (production) — 10 commits</h3>
+    <p class="footnote">كل commit = squash من PR واحد. تاريخ نظيف، كل release موثّق.</p>
+    <div class="branch-col">
+      <h4><span class="pill pill-prod">main</span> Production releases</h4>
+      <ol class="commit-list">
+        <li class="head">e7d191b Phase 3: Procurement + HR + Frontend Foundation (#10) ← HEAD</li>
+        <li>612208a Phase 2.5: Reports + Polish (#8)</li>
+        <li>ac1245c Phase 2.4: Event Bus + Integration (#7)</li>
+        <li>b099865 Phase 2.3: Stock Movements (#6)</li>
+        <li>9772b8e Phase 2.2: Inventory Core (#5)</li>
+        <li>41595ec Phase 2.1: Projects Module (#4)</li>
+        <li>2c408af Phase 1.5: Multi-Company (#3)</li>
+        <li>...</li>
+      </ol>
+    </div>
+
+    <h3>🌿 develop (integration + default) — 47 commits</h3>
+    <p class="footnote">كل commit = feature أو fix. تاريخ تفصيلي + work-in-progress. HEAD على GitHub.</p>
+    <div class="branch-col">
+      <h4><span class="pill pill-default">develop</span> Default branch</h4>
+      <ol class="commit-list">
+        <li class="head">6cf4926 docs(agents): document branch cleanup rule ← HEAD</li>
+        <li>7589b8b ci(frontend): add .eslintrc.json</li>
+        <li class="merge">90e34f9 merge: Phase 3 deliverables from feature/phase-3-frontend</li>
+        <li style="padding-right: 30px;">├ c197733 docs(smoke): add Frontend Phase 3 smoke test report</li>
+        <li style="padding-right: 30px;">├ 062a439 docs(agents): sync all AGENTS.md + CHANGELOG</li>
+        <li style="padding-right: 30px;">├ b41cd4e docs(report): add Phase 3 release report</li>
+        <li style="padding-right: 30px;">├ dcc13af feat(frontend): add Phase 3 pages</li>
+        <li style="padding-right: 30px;">├ 46e25d4 feat(hr): add HR Core module</li>
+        <li style="padding-right: 30px;">├ d4b04a7 feat(procurement): add Procurement module</li>
+        <li style="padding-right: 30px;">└ db1ce3a docs(research): add competitive gap analysis</li>
+        <li>d2a3440 docs(research): ERPNext features research</li>
+        <li>...</li>
+      </ol>
+    </div>
+
+    <div class="quote">
+      <strong>الـ 47 commits على develop هي "المطبخ"</strong> — كل التغييرات، التجارب، الـ docs الوسيطة.<br>
+      <strong>الـ 10 commits على main هي "المنيو"</strong> — فقط الـ releases النهائية، كل واحد = PR كامل بتفاصيله.
+    </div>
+  </section>
+
+  <!-- ============ SECTION 3: PHASE 4 SCENARIO ============ -->
+  <section id="phase4">
+    <h2>3. سيناريو Phase 4: HR + Payroll — خطوة بخطوة</h2>
+
+    <p>Phase 4 مخطط لها: Payroll calculation engine، Payslip generation، Tax deductions، EOS. مدتها 3-4 أسابيع.</p>
+
+    <h3>📋 التحضير (Mavis Owner) — قبل إطلاق الفريق</h3>
+    <ol class="timeline">
+      <li>
+        <strong>تحديث PLAN.md و AGENTS.md</strong>
+        <p>إضافة Phase 4 Scope + جدولة.</p>
+        <div class="step-action"><code>docs/PLAN.md</code> + <code>AGENTS.md</code> → commit <code>docs(plan): add Phase 4 scope</code></div>
+      </li>
+      <li>
+        <strong>تحضير gap-analysis محدّث</strong>
+        <p>بحث قصير: كيف يحسب Daftra و ERPNext الـ payroll، الـ tax brackets في ليبيا.</p>
+        <div class="step-action">→ commit <code>docs(research): payroll competitive analysis</code></div>
+      </li>
+      <li>
+        <strong>تحديد الـ deliverables للـ workers</strong>
+        <p>تقسيم Phase 4 لـ 3 deliverables منفصلة (worker-friendly):</p>
+        <div class="step-action">
+          Deliverable 1: <code>feature/phase-4-employee-extensions</code> (extend Employee + Department tree)<br>
+          Deliverable 2: <code>feature/phase-4-payroll-engine</code> (PayrollRun + PayrollItem + Salary calc)<br>
+          Deliverable 3: <code>feature/phase-4-payslip-pdf</code> (PDF generation + Email)
+        </div>
+      </li>
+    </ol>
+
+    <h3>🔨 التنفيذ (Team Plan) — workers بالتوازي</h3>
+
+    <h4 style="margin-top: 18px;">Round 1: Backend foundation (موازي)</h4>
+    <div class="grid-2">
+      <div class="card">
+        <h4>Task A — backend-architect</h4>
+        <p><strong>Branch:</strong> <code>feature/phase-4-employee-extensions</code></p>
+        <p><strong>المخرج:</strong> Employee entity extensions (bank account, tax ID, hire type) + Salary structure table.</p>
+        <div class="step-action">
+          Migration: <code>20260701_120000_AddPayrollFields.cs</code><br>
+          + Entities + Repository + Service<br>
+          + <strong>branch محذوف بعد merge</strong>
+        </div>
+      </div>
+      <div class="card">
+        <h4>Task B — backend-architect</h4>
+        <p><strong>Branch:</strong> <code>feature/phase-4-payroll-engine</code></p>
+        <p><strong>المخرج:</strong> PayrollRun (Draft → Processing → Posted) + PayrollItem + Salary calc engine.</p>
+        <div class="step-action">
+          Migration: <code>20260701_130000_CreatePayrollTables.cs</code><br>
+          + Calculation logic + Posting rules<br>
+          + <strong>15min timeout → Mavis takeover</strong>
+        </div>
+      </div>
+    </div>
+
+    <h4 style="margin-top: 24px;">Round 2: Frontend + Integration (بعد merge Round 1)</h4>
+    <div class="grid-2">
+      <div class="card">
+        <h4>Task C — frontend-engineer</h4>
+        <p><strong>Branch:</strong> <code>feature/phase-4-frontend</code></p>
+        <p><strong>المخرج:</strong> صفحات Payroll (list / new / detail) + Employees enhanced + payslip view.</p>
+      </div>
+      <div class="card">
+        <h4>Task D — general</h4>
+        <p><strong>Branch:</strong> <code>feature/phase-4-payslip-pdf</code></p>
+        <p><strong>المخرج:</strong> PDF generation library + Email integration.</p>
+      </div>
+    </div>
+
+    <h4 style="margin-top: 24px;">Round 3: Verification + Release</h4>
+    <ol class="timeline">
+      <li>
+        <strong>qa-tester: E2E سيناريو</strong>
+        <p>Register → Create Employees → Run Payroll → Generate Payslip → Verify GL entries</p>
+        <div class="step-action">→ <code>docs/E2E-TEST-PHASE4.md</code></div>
+      </li>
+      <li>
+        <strong>Mavis: AGENTS.md sync + CHANGELOG.md</strong>
+        <p>تحديث كل الـ AGENTS.md files بنفس قاعدة Phase 3.</p>
+        <div class="step-action">→ commit <code>docs(agents): sync Phase 4</code></div>
+      </li>
+      <li>
+        <strong>Mavis: PR develop → main (Squash)</strong>
+        <p>Merge كل feature branches أولاً، ثم squash PR إلى main.</p>
+        <div class="step-action">→ <code>Phase 4: Payroll + EOS released (#11)</code></div>
+      </li>
+      <li>
+        <strong>Cleanup: حذف كل feature branches</strong>
+        <div class="step-action">
+          <code>git branch -D feature/phase-4-*</code><br>
+          <code>git push origin --delete feature/phase-4-*</code><br>
+          <code>git remote prune origin</code>
+        </div>
+      </li>
+    </ol>
+
+    <h3>⏱️ Timeline المتوقع</h3>
+    <div class="diagram">
+      <svg viewBox="0 0 960 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;">
+        <defs>
+          <linearGradient id="bg1" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#2f6f5e" stop-opacity="0.8"/>
+            <stop offset="100%" stop-color="#2f6f5e" stop-opacity="0.4"/>
+          </linearGradient>
+          <linearGradient id="bg2" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#c97b3f" stop-opacity="0.8"/>
+            <stop offset="100%" stop-color="#c97b3f" stop-opacity="0.4"/>
+          </linearGradient>
+          <linearGradient id="bg3" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#1e40af" stop-opacity="0.7"/>
+            <stop offset="100%" stop-color="#1e40af" stop-opacity="0.3"/>
+          </linearGradient>
+          <linearGradient id="bg4" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#b06367" stop-opacity="0.8"/>
+            <stop offset="100%" stop-color="#b06367" stop-opacity="0.4"/>
+          </linearGradient>
+        </defs>
+        <line x1="60" y1="60" x2="900" y2="60" stroke="#7c7a72" stroke-width="2"/>
+        <!-- Week markers -->
+        <text x="60" y="100" font-family="JetBrains Mono, monospace" font-size="10" fill="#7c7a72">W1</text>
+        <text x="200" y="100" font-family="JetBrains Mono, monospace" font-size="10" fill="#7c7a72">W2</text>
+        <text x="340" y="100" font-family="JetBrains Mono, monospace" font-size="10" fill="#7c7a72">W3</text>
+        <text x="480" y="100" font-family="JetBrains Mono, monospace" font-size="10" fill="#7c7a72">W4</text>
+        <text x="620" y="100" font-family="JetBrains Mono, monospace" font-size="10" fill="#7c7a72">W5</text>
+        <!-- Phase bars -->
+        <rect x="60" y="40" width="280" height="40" fill="url(#bg1)" rx="6"/>
+        <text x="200" y="66" text-anchor="middle" font-family="Outfit, sans-serif" fill="white" font-size="12" font-weight="600">Round 1: Backend (موازي)</text>
+        <rect x="340" y="40" width="280" height="40" fill="url(#bg2)" rx="6"/>
+        <text x="480" y="66" text-anchor="middle" font-family="Outfit, sans-serif" fill="white" font-size="12" font-weight="600">Round 2: Frontend + Integration</text>
+        <rect x="620" y="40" width="280" height="40" fill="url(#bg3)" rx="6"/>
+        <text x="760" y="66" text-anchor="middle" font-family="Outfit, sans-serif" fill="white" font-size="12" font-weight="600">Round 3: Verification + Release</text>
+        <!-- milestones -->
+        <circle cx="60" cy="60" r="6" fill="#2f6f5e"/>
+        <circle cx="340" cy="60" r="6" fill="#c97b3f"/>
+        <circle cx="620" cy="60" r="6" fill="#1e40af"/>
+        <circle cx="900" cy="60" r="6" fill="#b06367"/>
+        <text x="60" y="160" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#7c7a72">📋 PLAN.md update</text>
+        <text x="340" y="160" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#7c7a72">📦 Backend merged to develop</text>
+        <text x="620" y="160" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#7c7a72">✅ E2E 12/12 PASS</text>
+        <text x="900" y="160" text-anchor="middle" font-family="Outfit, sans-serif" font-size="10" fill="#7c7a72">🚀 Phase 4 released</text>
+        <text x="480" y="190" text-anchor="middle" font-family="Outfit, sans-serif" font-size="11" font-style="italic" fill="#7c7a72">3 أسابيع (تقريباً)</text>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 4: WORKERS ============ -->
+  <section id="workers">
+    <h2>4. كيف يفهم الـ Workers الـ Workflow؟</h2>
+
+    <div class="answer-box">
+      <strong>السؤال الجوهري:</strong> كيف يقرأ الـ worker التعليمات ويفهم السياق؟
+    </div>
+
+    <h3>📚 المصادر اللي يقرأها الـ worker قبل البدء</h3>
+    <div class="grid-2">
+      <div class="card">
+        <h4>1. AGENTS.md (root)</h4>
+        <p>يعرف الـ stack، الـ conventions، الـ branches strategy.</p>
+      </div>
+      <div class="card">
+        <h4>2. docs/PLAN.md</h4>
+        <p>يعرف الـ phase الحالية وما هو مطلوب.</p>
+      </div>
+      <div class="card">
+        <h4>3. docs/research/gap-analysis.md</h4>
+        <p>يعرف scope الـ feature — كم entity، كم endpoint، كم migration.</p>
+      </div>
+      <div class="card">
+        <h4>4. الـ AGENTS.md الخاصة بالـ module</h4>
+        <p>يعرف patterns الموجودة (entity layout، repository pattern، DI).</p>
+      </div>
+    </div>
+
+    <h3>📨 الـ Prompt اللي يستقبله الـ worker</h3>
+    <p>كل worker task في الـ plan يحوي prompt واضح بـ:</p>
+    <pre><span class="c">// الـ prompt structure (من plan_b5ae4fc0)</span>
+prompt: |
+  أنت كبير مهندسين Backend (.NET 9 + Dapper + PostgreSQL). اقرأ:
+  - <span class="k">docs/research/gap-analysis.md</span> (خاصة قسم Phase 4)
+  - <span class="k">src/backend/AGENTS.md</span>
+  - <span class="k">src/backend/Modules/Inventory/AGENTS.md</span> (نفس النمط)
+
+  المطلوب: <span class="k">بدون كسر الـ existing</span>.
+
+  ## A) Module Name
+  1. Migration جديد: <span class="s">src/backend/Modules/X/Infrastructure/Migrations/...</span>
+  2. Entities: ...
+  3. DTOs + Validators: ...
+  4. Services: ...
+  5. Controller: ...
+
+  ## Constraints
+  - لا تغيّر أي ملف في Identity, Finance, Projects, ...
+  - dotnet build → 0 errors
+
+  ## Output
+  - Branch: <span class="s">feature/phase-4-X</span>
+  - Conventional commits (5-8 commits)
+  - PR إلى <span class="k">develop</span>
+
+  Stop condition: PR مفتوح + Backend يعمل + smoke test ناجح.</pre>
+
+    <h3>🔄 كيف الـ worker يعرف أن الـ branch نظيف؟</h3>
+    <ol class="timeline">
+      <li>
+        <strong>الـ worker يبدأ بـ:</strong>
+        <div class="step-action"><code>git checkout develop && git pull origin develop && git checkout -b feature/X</code></div>
+        <p>هذا يضمن أن الـ branch يبدأ من آخر integration.</p>
+      </li>
+      <li>
+        <strong>بعد كل commit:</strong>
+        <div class="step-action"><code>git push origin feature/X</code></div>
+        <p>الـ PR يُفتح تلقائياً (سواء من worker أو من Mavis).</p>
+      </li>
+      <li>
+        <strong>بعد merge في develop:</strong>
+        <p>branch cleanup rule يقول للـ worker (ولـ Mavis): احذف الـ branch فوراً.</p>
+      </li>
+      <li>
+        <strong>قبل بداية feature جديدة:</strong>
+        <p>الـ worker (أو Mavis) يعمل <code>git fetch + git pull</code> للتأكد من وجود آخر commits على develop.</p>
+      </li>
+    </ol>
+
+    <h3>🧠 كيف الـ worker يفهم "clean history"؟</h3>
+    <p>الـ worker <strong>لا يحتاج</strong> أن يفهم — يكفي التعليمات الصريحة في الـ prompt:</p>
+    <pre><span class="c">// في الـ prompt نحدد:</span>
+Branch: <span class="s">feature/phase-4-payroll-engine</span>
+Commits: Conventional commits (5-8 commits)
+PR: افتح PR إلى <span class="k">develop</span>
+بعد merge: المالك (Mavis) يحذف الـ branch تلقائياً
+
+<span class="c">// الـ worker يفهم:</span>
+- هو يكتب على feature/X
+- هو يصنع PR إلى develop
+- <span class="k">لا يفتح PR إلى main أبداً</span>
+- لا يحذف branches (هذا من مسؤولية Mavis)
+
+<span class="c">// المالك (Mavis) يتأكد:</span>
+- بعد كل merge: حذف branch + remote prune
+- تحديث AGENTS.md (نفس قاعدة Phase 3)
+- Push develop → main (Squash) في release النهائي</pre>
+
+    <h3>🤝 العقد بين المالك والـ Workers</h3>
+    <div class="warning-box">
+      <strong>⚠ العقد:</strong> الـ worker لا يدمج إلى main أبداً، ولا يحذف branches. المالك (Mavis) هو المسؤول الوحيد عن:
+      <ul style="margin: 8px 0;">
+        <li>Merge feature → develop</li>
+        <li>Delete feature branches (local + remote)</li>
+        <li>PR develop → main (Squash فقط)</li>
+        <li>تحديث AGENTS.md + CHANGELOG + PLAN.md</li>
+      </ul>
+    </div>
+
+    <div class="success-box">
+      <strong>✅ ما يحتاجه الـ worker فقط:</strong>
+      <ul style="margin: 8px 0;">
+        <li>Branch feature (من develop)</li>
+        <li>Commits + Conventional prefixes</li>
+        <li>Push + PR إلى develop</li>
+        <li>Stop condition واضح (build clean + smoke test PASS)</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 5: COMMANDS ============ -->
+  <section id="commands">
+    <h2>5. Cheatsheet: الأوامر الرئيسية</h2>
+
+    <h3>🚀 بداية Phase 4</h3>
+    <pre><span class="c"># تأكد من نظافة الـ working tree</span>
+git checkout develop
+git pull origin develop
+git status
+
+<span class="c"># شغّل المشروع محلياً</span>
+cd C:\Users\Anas\.minimax-agent\projects\ERP-SYSTEM
+.\start-dev.ps1
+
+<span class="c"># ابدأ feature جديد</span>
+git checkout -b feature/phase-4-employee-extensions
+
+<span class="c"># شغّل الـ workers</span>
+mavis team plan run .mavis/plans/phase4-plan.yaml</pre>
+
+    <h3>📦 خلال العمل</h3>
+    <pre><span class="c"># Conventional commit examples</span>
+git add .
+git commit -m "feat(payroll): add PayrollRun entity + Draft→Processing→Posted state"
+git commit -m "feat(payroll): add PayrollItem entity + Salary calculation engine"
+git commit -m "test(payroll): add PayrollServiceTests for calc edge cases"
+
+<span class="c"># Push + PR</span>
+git push origin feature/phase-4-payroll-engine
+gh pr create --base develop --head feature/phase-4-payroll-engine \
+  --title "Phase 4.1: Payroll Engine" --body "..."</pre>
+
+    <h3>✅ بعد Merge (Cleanup)</h3>
+    <pre><span class="c"># محلياً</span>
+git checkout develop
+git pull origin develop
+git branch -d feature/phase-4-employee-extensions
+git branch -d feature/phase-4-payroll-engine
+git branch -d feature/phase-4-payslip-pdf
+
+<span class="c"># remote</span>
+git push origin --delete feature/phase-4-employee-extensions
+git push origin --delete feature/phase-4-payroll-engine
+git push origin --delete feature/phase-4-payslip-pdf
+git remote prune origin
+
+<span class="c"># تحقق</span>
+git branch -a
+git remote show origin</pre>
+
+    <h3>🚀 Release (develop → main بـ Squash)</h3>
+    <pre><span class="c"># على GitHub UI</span>
+- افتح PR من develop → main
+- اضغط "Merge" → اختار "Squash and merge"
+- العنوان: "Phase 4: HR + Payroll + EOS released"
+- اضغط "Confirm squash and merge"
+
+<span class="c"># أو من CLI</span>
+gh pr create --base main --head develop --title "Phase 4: HR + Payroll + EOS"
+gh pr merge --squash --delete-branch</pre>
+
+    <h3>🔍 التحقق بعد Release</h3>
+    <pre><span class="c"># main نظيف</span>
+git log --oneline origin/main -5
+
+<span class="c"># develop بعدد commits أعلى (التاريخ التفصيلي)</span>
+git log --oneline develop -10
+
+<span class="c"># CI يجب يكون passing</span>
+gh run list --branch main --limit 3
+gh pr list --state all</pre>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer>
+    <p>🤖 Generated by <strong>Mavis</strong> (Orchestrator, m3) — 2026-06-24</p>
+    <p style="font-size: 0.82rem;">📁 <code>docs/workflows/PHASE-4-WORKFLOW.html</code> · للإحالة عند بداية Phase 4</p>
+  </footer>
+
+</div>
+
+</body>
+</html>

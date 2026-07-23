@@ -1,0 +1,49 @@
+# ===== Build outputs =====
+src/backend/**/bin/
+src/backend/**/obj/
+src/backend/**/*.pdb
+src/backend/**/*.user
+src/frontend/.next/
+src/frontend/node_modules/
+src/frontend/tsconfig.tsbuildinfo
+
+# ===== IDE =====
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.userprefs
+
+# ===== OS =====
+.DS_Store
+Thumbs.db
+*.swp
+*.bak
+
+# ===== Logs =====
+*.log
+logs/
+.pnp
+.pnp.js
+
+# ===== Testing =====
+TestResults/
+coverage/
+.nyc_output/
+
+# ===== Environment =====
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+*.pem
+
+# ===== Mavis internal =====
+.mavis/
+.playwright-mcp/
+
+# ===== Misc =====
+*.tmp
+*.orig

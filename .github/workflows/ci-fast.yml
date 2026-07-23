@@ -1,0 +1,136 @@
+name: CI Fast (Tests + Build)
+
+# DEC-054: Fast feedback loop on every push.
+# Runs unit + integration tests, NO HF Space deploy (saves 8-12 min).
+# For deploy, see ci-deploy.yml (manual or merge to develop).
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+    branches: [develop, main]
+
+concurrency:
+  group: ci-fast-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_VERSION: '9.0.x'
+  NODE_VERSION: '20'
+
+jobs:
+  # ===================================================================
+  # Backend: unit + integration tests (with test DB)
+  # ===================================================================
+  backend-tests:
+    name: Backend Tests (.NET 9.0)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/backend
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: erp_test
+          POSTGRES_PASSWORD: erp_test_pw
+          POSTGRES_DB: erp_test_system
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U erp_test -d erp_test_system"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      ConnectionStrings__Postgres: "Host=localhost;Port=5432;Database=erp_test_system;Username=erp_test;Password=erp_test_pw"
+      ConnectionStrings__Redis: "localhost:6379"
+      # Marten disabled (DEC-017). Re-enable in Sprint-5.
+      # When enabled: Marten__ConnectionString: "Host=localhost;..."
+      JwtSettings__Secret: "CI_FAST_TEST_SECRET_REPLACE_32CHARS_xxxxxxxxxxxxxx"
+      Database__AutoMigrate: "true"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET ${{ env.DOTNET_VERSION }}
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Restore Backend
+        run: dotnet restore Host/ERP-SYSTEM.csproj
+
+      - name: Restore Tests
+        run: dotnet restore Tests/ERPSystem.Tests/ERPSystem.Tests.csproj
+
+      - name: Build Backend
+        run: dotnet build Host/ERP-SYSTEM.csproj --no-restore --configuration Release
+
+      - name: Build Tests
+        run: dotnet build Tests/ERPSystem.Tests/ERPSystem.Tests.csproj --no-restore --configuration Release
+
+      - name: Run all tests (unit + integration)
+        run: |
+          dotnet test Tests/ERPSystem.Tests/ERPSystem.Tests.csproj \
+            --no-build --configuration Release \
+            --collect:"XPlat Code Coverage" \
+            --logger "trx;LogFileName=test-results.trx" \
+            --logger "console;verbosity=normal"
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-ci-fast
+          path: '**/TestResults/**/*.trx'
+
+  # ===================================================================
+  # Frontend: type-check + lint + build
+  # ===================================================================
+  frontend-build:
+    name: Frontend Build (Next.js 14)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/frontend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: src/frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npm run type-check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: 'http://localhost:5000'
+
+      - name: Upload build artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: src/frontend/.next/standalone/
+          retention-days: 3

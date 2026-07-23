@@ -1,0 +1,21 @@
+{
+  "name": "ReceiptAllocation",
+  "table": "receipt_allocations",
+  "version": "1.0.0",
+  "module": "AccountsReceivable",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "tenant_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "tenants", "column": "id", "on_delete": "cascade" } },
+    { "name": "receipt_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "receipts", "column": "id", "on_delete": "cascade" } },
+    { "name": "sales_invoice_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "sales_invoices", "column": "id", "on_delete": "cascade" } },
+    { "name": "amount_applied", "type": "numeric(18,4)", "nullable": false }
+  ],
+  "indexes": [
+    { "name": "ix_ra_receipt", "columns": ["receipt_id"] },
+    { "name": "ix_ra_invoice", "columns": ["sales_invoice_id"] },
+    { "name": "ix_ra_tenant", "columns": ["tenant_id"] }
+  ]
+}

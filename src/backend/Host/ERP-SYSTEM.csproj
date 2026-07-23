@@ -1,0 +1,55 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>ERPSystem.Host</RootNamespace>
+    <AssemblyName>ERPSystem.Host</AssemblyName>
+    <NoWarn>$(NoWarn);NU1903;NU1904;CS1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Logging -->
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.2" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+    <PackageReference Include="Serilog.Formatting.Compact" Version="3.0.0" />
+    <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+    <PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
+
+    <!-- Error tracking (optional — disabled when Sentry__Dsn not set) -->
+    <PackageReference Include="Sentry.AspNetCore" Version="4.6.0" />
+
+    <!-- API Documentation -->
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.6.2" />
+
+    <!-- Database -->
+    <PackageReference Include="Npgsql" Version="8.0.5" />
+    <PackageReference Include="Dapper" Version="2.1.35" />
+    <PackageReference Include="FluentMigrator" Version="5.0.0" />
+    <PackageReference Include="FluentMigrator.Runner.Postgres" Version="5.0.0" />
+
+    <!-- Event Store -->
+    <PackageReference Include="Marten" Version="7.34.0" />
+
+    <!-- Caching -->
+    <PackageReference Include="StackExchange.Redis" Version="2.8.16" />
+
+    <!-- Identity & Security -->
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.2" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+  </ItemGroup>
+
+  <!--
+    Phase 0: Modular Monolith — Host يضمّ كل الـ source files من Modules/ و Shared/
+    عند الانتقال إلى project-per-module في مراحل لاحقة، تتحول هذه إلى <ProjectReference>.
+  -->
+  <ItemGroup>
+    <Compile Include="..\Modules\**\*.cs" LinkBase="Modules" />
+    <Compile Include="..\Shared\**\*.cs" LinkBase="Shared" />
+  </ItemGroup>
+
+</Project>

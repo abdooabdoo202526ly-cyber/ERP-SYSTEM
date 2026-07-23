@@ -1,0 +1,23 @@
+{
+  "name": "ItemCategory",
+  "table": "item_categories",
+  "version": "1.0.0",
+  "module": "Inventory",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "tenant_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "tenants", "column": "id", "on_delete": "cascade" } },
+    { "name": "code", "type": "varchar(50)", "nullable": false },
+    { "name": "name", "type": "varchar(200)", "nullable": false },
+    { "name": "description", "type": "varchar(500)", "nullable": true },
+    { "name": "parent_id", "type": "uuid", "nullable": true,
+      "foreign_key": { "table": "item_categories", "column": "id", "on_delete": "set_null" } },
+    { "name": "is_active", "type": "boolean", "nullable": false, "default": "true" },
+    { "name": "created_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "updated_at", "type": "timestamptz", "nullable": false, "default": "now()" }
+  ],
+  "indexes": [
+    { "name": "ix_item_categories_tenant_code", "columns": ["tenant_id", "code"], "unique": true },
+    { "name": "ix_item_categories_tenant_parent", "columns": ["tenant_id", "parent_id"] }
+  ]
+}

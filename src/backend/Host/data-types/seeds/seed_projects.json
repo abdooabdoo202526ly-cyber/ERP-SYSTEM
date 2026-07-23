@@ -1,0 +1,19 @@
+{
+  "entity": "Project",
+  "table": "projects",
+  "tenant_id": "f77dbedd-64ff-41ac-b77a-0731183ff744",
+  "_comment": "DEC-086: 11 projects (the 3 from AlFajr + 8 new). company_id is ALF. status: 0=Planning, 1=Active.",
+  "records": [
+    { "code": "P-2026-001", "name": "مشروع بناء فيلات السُّرَّي", "description": "مشروع بناء 4 فيلات متكاملة مع التشطيبات", "status": 1, "budget": 450000, "start_date": "2026-01-10", "end_date": "2026-12-31", "is_active": true },
+    { "code": "P-2026-002", "name": "تجديد مبنى municipal",      "description": "تجديد شامل تشمل الهيكل والتشطيبات",       "status": 1, "budget": 180000, "start_date": "2026-03-01", "end_date": "2026-10-31", "is_active": true },
+    { "code": "P-2026-003", "name": "مشروع صيانة طرق",            "description": "صيانة وإعادة رصف طرق في 3 أحياء",        "status": 0, "budget":  95000, "start_date": "2026-06-01", "end_date": "2026-12-31", "is_active": true },
+    { "code": "P-2026-004", "name": "مشروع طريق المطار",          "description": "توسيع وتأهيل الطريق الرئيسي للمطار",       "status": 1, "budget": 320000, "start_date": "2025-08-01", "end_date": "2026-08-31", "is_active": true },
+    { "code": "P-2026-005", "name": "تطوير مجمع السكني",          "description": "مجمع سكني عصري بـ 200 وحدة",                  "status": 1, "budget": 850000, "start_date": "2025-06-15", "end_date": "2026-12-15", "is_active": true },
+    { "code": "P-2026-006", "name": "صيانة المدارس",              "description": "صيانة شاملة لـ 15 مدرسة حكومية",            "status": 0, "budget": 120000, "start_date": "2025-07-01", "end_date": "2026-08-31", "is_active": true },
+    { "code": "P-2026-007", "name": "بناء مستشفى الأطفال",        "description": "مستشفى تخصصي للأطفال سعة 100 سرير",         "status": 1, "budget":1200000, "start_date": "2025-04-01", "end_date": "2027-03-31", "is_active": true },
+    { "code": "P-2026-008", "name": "تحديث البنية التحتية للمياه", "description": "استبدال أنابيب المياه الرئيسية في المدينة", "status": 1, "budget": 280000, "start_date": "2025-09-01", "end_date": "2026-09-30", "is_active": true },
+    { "code": "P-2026-009", "name": "مشروع الإسكان الاجتماعي",    "description": "بناء 500 وحدة سكنية اجتماعية",              "status": 1, "budget": 750000, "start_date": "2025-10-01", "end_date": "2027-04-30", "is_active": true },
+    { "code": "P-2026-010", "name": "مجمع تجاري الشط",            "description": "مجمع تجاري 50 محل + موقف 200 سيارة",     "status": 1, "budget": 420000, "start_date": "2025-11-01", "end_date": "2026-10-31", "is_active": true },
+    { "code": "P-2026-011", "name": "صيانة الطرق السريعة",        "description": "إعادة تأهيل 50 كم من الطرق السريعة",         "status": 0, "budget": 180000, "start_date": "2026-01-01", "end_date": "2026-12-31", "is_active": true }
+  ]
+}

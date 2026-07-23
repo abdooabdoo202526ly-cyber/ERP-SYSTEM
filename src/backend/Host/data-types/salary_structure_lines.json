@@ -1,0 +1,22 @@
+{
+  "name": "SalaryStructureLine",
+  "table": "salary_structure_lines",
+  "version": "1.0.0",
+  "module": "Payroll",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "tenant_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "tenants", "column": "id", "on_delete": "cascade" } },
+    { "name": "salary_structure_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "salary_structures", "column": "id", "on_delete": "restrict" } },
+    { "name": "type", "type": "varchar(20)", "nullable": false },
+    { "name": "name", "type": "varchar(200)", "nullable": false },
+    { "name": "formula", "type": "varchar(500)", "nullable": true },
+    { "name": "amount", "type": "numeric(18,4)", "nullable": false, "default": "0" },
+    { "name": "sort_order", "type": "integer", "nullable": false, "default": "0" }
+  ],
+  "indexes": [
+    { "name": "ix_salary_structure_lines_tenant_structure", "columns": ["tenant_id", "salary_structure_id"] },
+    { "name": "ix_salary_structure_lines_structure_order", "columns": ["salary_structure_id", "sort_order"] }
+  ]
+}

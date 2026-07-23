@@ -1,0 +1,23 @@
+{
+  "name": "User",
+  "table": "users",
+  "version": "1.0.0",
+  "module": "Identity",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "tenant_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "tenants", "column": "id", "on_delete": "cascade" } },
+    { "name": "email", "type": "varchar(255)", "nullable": false },
+    { "name": "password_hash", "type": "varchar(500)", "nullable": false },
+    { "name": "full_name", "type": "varchar(200)", "nullable": false },
+    { "name": "is_active", "type": "boolean", "nullable": false, "default": "true" },
+    { "name": "two_factor_enabled", "type": "boolean", "nullable": false, "default": "false" },
+    { "name": "created_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "updated_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "last_login_at", "type": "timestamptz", "nullable": true }
+  ],
+  "indexes": [
+    { "name": "ix_users_tenant_email", "columns": ["tenant_id", "email"], "unique": true },
+    { "name": "ix_users_email", "columns": ["email"] }
+  ]
+}

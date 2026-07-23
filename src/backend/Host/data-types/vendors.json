@@ -1,0 +1,31 @@
+{
+  "name": "Vendor",
+  "table": "vendors",
+  "version": "1.0.0",
+  "module": "Procurement",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "tenant_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "tenants", "column": "id", "on_delete": "cascade" } },
+    { "name": "code", "type": "varchar(50)", "nullable": false },
+    { "name": "name", "type": "varchar(200)", "nullable": false },
+    { "name": "email", "type": "varchar(200)", "nullable": true },
+    { "name": "phone", "type": "varchar(50)", "nullable": true },
+    { "name": "address", "type": "text", "nullable": true },
+    { "name": "tax_number", "type": "varchar(50)", "nullable": true },
+    { "name": "website", "type": "varchar(200)", "nullable": true },
+    { "name": "currency", "type": "varchar(3)", "nullable": false, "default": "'LYD'" },
+    { "name": "payment_terms", "type": "varchar(20)", "nullable": false, "default": "'Net30'" },
+    { "name": "is_active", "type": "boolean", "nullable": false, "default": "true" },
+    { "name": "created_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "created_by", "type": "uuid", "nullable": false },
+    { "name": "updated_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "updated_by", "type": "uuid", "nullable": true },
+    { "name": "deleted_at", "type": "timestamptz", "nullable": true }
+  ],
+  "indexes": [
+    { "name": "ix_vendors_tenant_code", "columns": ["tenant_id", "code"], "unique": true },
+    { "name": "ix_vendors_tenant_active", "columns": ["tenant_id", "is_active"] },
+    { "name": "ix_vendors_tax_number", "columns": ["tax_number"] }
+  ]
+}

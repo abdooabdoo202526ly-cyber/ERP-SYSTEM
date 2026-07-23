@@ -1,0 +1,37 @@
+{
+  "name": "VendorBill",
+  "table": "vendor_bills",
+  "version": "1.0.0",
+  "module": "Procurement",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "tenant_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "tenants", "column": "id", "on_delete": "cascade" } },
+    { "name": "bill_number", "type": "varchar(50)", "nullable": false },
+    { "name": "goods_receipt_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "goods_receipts", "column": "id", "on_delete": "restrict" } },
+    { "name": "vendor_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "vendors", "column": "id", "on_delete": "restrict" } },
+    { "name": "status", "type": "varchar(20)", "nullable": false, "default": "'Draft'" },
+    { "name": "bill_date", "type": "timestamptz", "nullable": false },
+    { "name": "due_date", "type": "timestamptz", "nullable": true },
+    { "name": "currency", "type": "varchar(3)", "nullable": false, "default": "'LYD'" },
+    { "name": "sub_total", "type": "numeric(18,4)", "nullable": false, "default": "0" },
+    { "name": "tax_amount", "type": "numeric(18,4)", "nullable": false, "default": "0" },
+    { "name": "total_amount", "type": "numeric(18,4)", "nullable": false, "default": "0" },
+    { "name": "notes", "type": "text", "nullable": true },
+    { "name": "journal_entry_id", "type": "uuid", "nullable": true,
+      "foreign_key": { "table": "journal_entries", "column": "id", "on_delete": "set_null" } },
+    { "name": "posted_at", "type": "timestamptz", "nullable": true },
+    { "name": "created_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "created_by", "type": "uuid", "nullable": false },
+    { "name": "updated_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "updated_by", "type": "uuid", "nullable": true }
+  ],
+  "indexes": [
+    { "name": "ix_vb_tenant_billnumber", "columns": ["tenant_id", "bill_number"], "unique": true },
+    { "name": "ix_vb_tenant_vendor", "columns": ["tenant_id", "vendor_id"] },
+    { "name": "ix_vb_tenant_gr", "columns": ["tenant_id", "goods_receipt_id"] },
+    { "name": "ix_vb_tenant_status", "columns": ["tenant_id", "status"] }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "name": "PayslipComponent",
+  "table": "payslip_components",
+  "version": "1.0.0",
+  "module": "Payroll",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "tenant_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "tenants", "column": "id", "on_delete": "cascade" } },
+    { "name": "payroll_item_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "payroll_items", "column": "id", "on_delete": "cascade" } },
+    { "name": "component_type", "type": "varchar(20)", "nullable": false },
+    { "name": "name", "type": "varchar(200)", "nullable": false },
+    { "name": "amount", "type": "numeric(18,4)", "nullable": false, "default": "0" },
+    { "name": "sort_order", "type": "integer", "nullable": false, "default": "0" }
+  ],
+  "indexes": [
+    { "name": "ix_payslip_components_tenant_item", "columns": ["tenant_id", "payroll_item_id"] },
+    { "name": "ix_payslip_components_item_order", "columns": ["payroll_item_id", "sort_order"] }
+  ]
+}

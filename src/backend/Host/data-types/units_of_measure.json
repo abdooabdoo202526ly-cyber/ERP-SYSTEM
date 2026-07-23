@@ -1,0 +1,20 @@
+{
+  "name": "UnitOfMeasure",
+  "table": "units_of_measure",
+  "version": "1.0.0",
+  "module": "Inventory",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "tenant_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "tenants", "column": "id", "on_delete": "cascade" } },
+    { "name": "code", "type": "varchar(20)", "nullable": false },
+    { "name": "name", "type": "varchar(100)", "nullable": false },
+    { "name": "symbol", "type": "varchar(20)", "nullable": true },
+    { "name": "is_active", "type": "boolean", "nullable": false, "default": "true" },
+    { "name": "created_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "updated_at", "type": "timestamptz", "nullable": false, "default": "now()" }
+  ],
+  "indexes": [
+    { "name": "ix_uom_tenant_code", "columns": ["tenant_id", "code"], "unique": true }
+  ]
+}

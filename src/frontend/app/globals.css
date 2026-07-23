@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Cairo', 'Noto Sans Arabic', system-ui, -apple-system, sans-serif;
+}
+
+/* ============ Print styles (Payslip) ============ */
+@media print {
+  /* إخفاء sidebar + topbar + أزرار التنقل عند الطباعة */
+  header,
+  aside,
+  button,
+  nav {
+    display: none !important;
+  }
+
+  /* عرض محتوى الـ main فقط */
+  main {
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+
+  /* خلفية بيضاء نظيفة للطباعة */
+  body {
+    background: white !important;
+  }
+
+  /* إزالة الظلال والحدود الثقيلة */
+  .shadow-sm,
+  .shadow-md,
+  .shadow-lg {
+    box-shadow: none !important;
+  }
+}

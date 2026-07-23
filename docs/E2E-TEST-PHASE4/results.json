@@ -1,0 +1,122 @@
+﻿[
+  {
+    "step": 1,
+    "action": "Health liveness",
+    "endpoint": "GET /health/live",
+    "expected": "200 healthy",
+    "actual": "200 OK in 2365ms (first call)",
+    "result": "PASS",
+    "notes": "MapGet in Program.cs"
+  },
+  {
+    "step": 2,
+    "action": "Health readiness (with Redis cap fix)",
+    "endpoint": "GET /health/ready",
+    "expected": "200 ready, Redis capped at 500ms",
+    "actual": "200 ready in 608ms, Postgres=16ms, Redis=false (capped)",
+    "result": "PASS",
+    "notes": "Redis 5s timeout fixed via ConnectTimeout=1s + CTS in HealthController"
+  },
+  {
+    "step": 3,
+    "action": "Swagger API docs",
+    "endpoint": "GET /swagger/v1/swagger.json",
+    "expected": "200 + paths",
+    "actual": "200 with all registered paths",
+    "result": "PASS"
+  },
+  {
+    "step": 4,
+    "action": "Login with demo account",
+    "endpoint": "POST /api/auth/login",
+    "expected": "200 + JWT token",
+    "actual": "200 OK, accessToken returned",
+    "result": "PASS",
+    "request": { "email": "anas@demo.local", "password": "Demo1234", "tenantSlug": "democompany" }
+  },
+  {
+    "step": 5,
+    "action": "List payroll runs (EnumStringTypeHandler fix)",
+    "endpoint": "GET /api/hr/payroll/runs",
+    "expected": "200 + array of PayrollRunDto with status enum mapped",
+    "actual": "200 with 2 runs, status='Draft' (enum correctly mapped from string)",
+    "result": "PASS",
+    "notes": "EnumStringTypeHandler<TEnum> working — would have been 500 without fix"
+  },
+  {
+    "step": 6,
+    "action": "List employees",
+    "endpoint": "GET /api/hr/employees",
+    "expected": "200 + array",
+    "actual": "200 with 1 employee",
+    "result": "PASS"
+  },
+  {
+    "step": 7,
+    "action": "List vendors (Procurement enum test)",
+    "endpoint": "GET /api/procurement/vendors",
+    "expected": "200 + array",
+    "actual": "200 with 1 vendor",
+    "result": "PASS",
+    "notes": "Vendor.Status enum also working — generic handler fixes all modules"
+  },
+  {
+    "step": 8,
+    "action": "List departments",
+    "endpoint": "GET /api/hr/departments",
+    "expected": "200 + array",
+    "actual": "200 with 1 department",
+    "result": "PASS"
+  },
+  {
+    "step": 9,
+    "action": "Validate JWT",
+    "endpoint": "GET /api/auth/me",
+    "expected": "200 + user info",
+    "actual": "200 OK",
+    "result": "PASS"
+  },
+  {
+    "step": 10,
+    "action": "Create new payroll run (PayrollService.Create)",
+    "endpoint": "POST /api/hr/payroll/runs",
+    "expected": "201 + new PayrollRunDto",
+    "actual": "201 with new id 81124c7a-6650-4b88-b41f-46477a454e75, status='Draft'",
+    "result": "PASS",
+    "request": { "periodStart": "2026-08-01T00:00:00Z", "periodEnd": "2026-08-31T23:59:59Z", "notes": "E2E test run by Mavis" }
+  },
+  {
+    "step": 11,
+    "action": "Read back created run",
+    "endpoint": "GET /api/hr/payroll/runs/{id}",
+    "expected": "200 + PayrollRunDto",
+    "actual": "200 with full run including notes",
+    "result": "PASS"
+  },
+  {
+    "step": 12,
+    "action": "List items for new run (empty)",
+    "endpoint": "GET /api/hr/payroll/runs/{id}/items",
+    "expected": "200 + [] (no employees processed yet)",
+    "actual": "200 with empty array",
+    "result": "PASS",
+    "notes": "Items only created after POST /process workflow"
+  },
+  {
+    "step": 13,
+    "action": "Frontend root page",
+    "endpoint": "GET http://localhost:3000",
+    "expected": "200 HTML",
+    "actual": "200 with 5502 bytes HTML (Next.js landing page)",
+    "result": "PASS"
+  },
+  {
+    "step": 14,
+    "action": "Re-verify /health/ready timing improvement",
+    "endpoint": "GET /health/ready",
+    "expected": "< 1000ms (was 5000ms+ before Redis fix)",
+    "actual": "200 in 698ms (cached connection)",
+    "result": "PASS",
+    "notes": "Consistent 600-700ms response time, well under old 5s baseline"
+  }
+]

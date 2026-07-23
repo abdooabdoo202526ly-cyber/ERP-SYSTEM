@@ -1,0 +1,75 @@
+# Hugging Face ignore patterns
+
+# Build outputs
+src/frontend/node_modules/
+src/frontend/.next/
+src/frontend/.out/
+src/frontend/build/
+src/frontend/dist/
+
+src/backend/Host/bin/
+src/backend/Host/obj/
+src/backend/**/bin/
+src/backend/**/obj/
+
+# Test outputs
+src/backend/Tests/**/bin/
+src/backend/Tests/**/obj/
+
+# IDE / OS
+.vs/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Git
+.git/
+.gitignore
+.github/
+
+# Documentation
+docs/
+*.md
+!README.md
+AGENTS.md
+CHANGELOG.md
+PLAN.md
+
+# CI/CD
+ci/
+.cspell.json
+.editorconfig
+.prettierrc*
+.eslintrc*
+.tgitconfig
+
+# Sandbox-specific
+sandbox/
+.mavis/
+*.pdf
+*.log
+
+# Helper scripts (Windows-only, not needed on HF Linux)
+New Text Document.txt
+restart-backend.ps1
+star-stop-sys.bas
+start-dev.ps1
+stop-dev.ps1
+
+# Backend published output
+src/backend/publish/
+src/backend/Host/publish/

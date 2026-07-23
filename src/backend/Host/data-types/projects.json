@@ -1,0 +1,34 @@
+{
+  "name": "Project",
+  "table": "projects",
+  "version": "1.0.0",
+  "module": "Projects",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "tenant_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "tenants", "column": "id", "on_delete": "cascade" } },
+    { "name": "company_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "companies", "column": "id", "on_delete": "restrict" } },
+    { "name": "cost_center_id", "type": "uuid", "nullable": false },
+    { "name": "code", "type": "varchar(50)", "nullable": false },
+    { "name": "name", "type": "varchar(200)", "nullable": false },
+    { "name": "description", "type": "text", "nullable": true },
+    { "name": "customer_id", "type": "uuid", "nullable": true,
+      "foreign_key": { "table": "customers", "column": "id", "on_delete": "set_null" } },
+    { "name": "status", "type": "integer", "nullable": false, "default": "0" },
+    { "name": "budget", "type": "numeric(18,4)", "nullable": false, "default": "0" },
+    { "name": "start_date", "type": "timestamptz", "nullable": false },
+    { "name": "end_date", "type": "timestamptz", "nullable": true },
+    { "name": "created_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "created_by", "type": "uuid", "nullable": false },
+    { "name": "updated_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "updated_by", "type": "uuid", "nullable": true },
+    { "name": "is_active", "type": "boolean", "nullable": false, "default": "true" },
+    { "name": "deleted_at", "type": "timestamptz", "nullable": true }
+  ],
+  "indexes": [
+    { "name": "ix_projects_tenant_code", "columns": ["tenant_id", "code"], "unique": true },
+    { "name": "ix_projects_tenant_company", "columns": ["tenant_id", "company_id"] },
+    { "name": "ix_projects_deleted_at", "columns": ["deleted_at"] }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "UserRole",
+  "table": "user_roles",
+  "version": "1.0.0",
+  "module": "Identity",
+  "primary_key": ["user_id", "role_id"],
+  "fields": [
+    { "name": "user_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "users", "column": "id", "on_delete": "cascade" } },
+    { "name": "role_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "roles", "column": "id", "on_delete": "cascade" } },
+    { "name": "assigned_at", "type": "timestamptz", "nullable": false, "default": "now()" }
+  ],
+  "indexes": []
+}

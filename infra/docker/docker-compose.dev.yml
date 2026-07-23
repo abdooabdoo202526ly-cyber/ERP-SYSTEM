@@ -1,0 +1,105 @@
+version: '3.9'
+
+services:
+  # PostgreSQL - قاعدة OLTP الرئيسية
+  # ملاحظة: PLAN.md v2.0 يعتمد PostgreSQL 15 (متوفر أكثر، API مستقر).
+  postgres:
+    image: postgres:15-alpine
+    container_name: erp-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: erp_user
+      POSTGRES_PASSWORD: erp_password
+      # إنشاء قاعدتي البيانات: OLTP + EventStore
+      POSTGRES_MULTIPLE_DATABASES: "erp_system:erp_events"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U erp_user -d erp_system"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis - Cache و Session Storage
+  redis:
+    image: redis:7-alpine
+    container_name: erp-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend API
+  api:
+    build:
+      context: ../../src/backend
+      dockerfile: Dockerfile
+    container_name: erp-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: "http://+:5000"
+      ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=erp_system;Username=erp_user;Password=erp_password;Include Error Detail=true"
+      ConnectionStrings__Redis: "redis:6379"
+      Marten__ConnectionString: "Host=postgres;Port=5432;Database=erp_events;Username=erp_user;Password=erp_password;Include Error Detail=true"
+      # ⚠️ يُستبدل في الإنتاج عبر secrets (لا تُحفظ في git)
+      JwtSettings__Secret: "DEV_ONLY_REPLACE_IN_PRODUCTION_WITH_64_CHAR_RANDOM_SECRET_xxxxxxxx"
+      Database__AutoMigrate: "true"
+      Database__SeedAlFajrScenario: "true"
+      Database__SeedRealisticScenario: "true"
+    ports:
+      - "5000:5000"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  # Frontend (Next.js dev server)
+  frontend:
+    build:
+      context: ../../src/frontend
+      dockerfile: Dockerfile
+    image: erp-system-frontend:latest
+    container_name: erp-frontend
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      # فقط الـ source code — node_modules مخزّنة في الـ image
+      - ../../src/frontend:/app
+      # استثناء node_modules من mount عشان ما يطمس الـ deps اللي في الـ image
+      - /app/node_modules
+      - /app/.next
+    ports:
+      - "3000:3000"
+    environment:
+      # الـ browser يشتغل على الـ host (Windows)، فيستدعي الـ backend عبر localhost
+      NEXT_PUBLIC_API_URL: "http://localhost:5000"
+      # للـ SSR — يستخدم الـ service name داخل Docker
+      API_URL_INTERNAL: "http://api:5000"
+      # تحسينات dev server
+      NEXT_TELEMETRY_DISABLED: "1"
+      WATCHPACK_POLLING: "true"
+    command: npm run dev
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:
+  redis_data:
+  frontend_node_modules:

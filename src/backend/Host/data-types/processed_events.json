@@ -1,0 +1,16 @@
+{
+  "name": "ProcessedEvent",
+  "table": "processed_events",
+  "version": "1.0.0",
+  "module": "Shared",
+  "fields": [
+    { "name": "event_id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "tenant_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "tenants", "column": "id", "on_delete": "cascade" } },
+    { "name": "processed_at", "type": "timestamptz", "nullable": false, "default": "now()" }
+  ],
+  "indexes": [
+    { "name": "ix_processed_events_tenant", "columns": ["tenant_id"] },
+    { "name": "ix_processed_events_tenant_processed", "columns": ["tenant_id", "processed_at"] }
+  ]
+}

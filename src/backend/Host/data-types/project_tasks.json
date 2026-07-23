@@ -1,0 +1,27 @@
+{
+  "name": "ProjectTask",
+  "table": "project_tasks",
+  "version": "1.0.0",
+  "module": "Projects",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "tenant_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "tenants", "column": "id", "on_delete": "cascade" } },
+    { "name": "project_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "projects", "column": "id", "on_delete": "cascade" } },
+    { "name": "name", "type": "varchar(200)", "nullable": false },
+    { "name": "description", "type": "text", "nullable": true },
+    { "name": "status", "type": "integer", "nullable": false, "default": "1" },
+    { "name": "estimated_hours", "type": "numeric(18,4)", "nullable": false, "default": "0" },
+    { "name": "actual_hours", "type": "numeric(18,4)", "nullable": false, "default": "0" },
+    { "name": "start_date", "type": "timestamptz", "nullable": true },
+    { "name": "end_date", "type": "timestamptz", "nullable": true },
+    { "name": "progress_percent", "type": "integer", "nullable": false, "default": "0" },
+    { "name": "created_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "updated_at", "type": "timestamptz", "nullable": false, "default": "now()" }
+  ],
+  "indexes": [
+    { "name": "ix_pt_project", "columns": ["project_id"] },
+    { "name": "ix_pt_tenant", "columns": ["tenant_id"] }
+  ]
+}

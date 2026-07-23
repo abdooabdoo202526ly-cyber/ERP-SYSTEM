@@ -1,0 +1,21 @@
+{
+  "name": "PaymentAllocation",
+  "table": "payment_allocations",
+  "version": "1.0.0",
+  "module": "Payments",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "tenant_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "tenants", "column": "id", "on_delete": "cascade" } },
+    { "name": "payment_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "payments", "column": "id", "on_delete": "cascade" } },
+    { "name": "ref_type", "type": "varchar(20)", "nullable": false },
+    { "name": "ref_id", "type": "uuid", "nullable": false },
+    { "name": "amount_applied", "type": "numeric(18,4)", "nullable": false }
+  ],
+  "indexes": [
+    { "name": "ix_pa_payment", "columns": ["payment_id"] },
+    { "name": "ix_pa_ref", "columns": ["ref_type", "ref_id"] },
+    { "name": "ix_pa_tenant", "columns": ["tenant_id"] }
+  ]
+}

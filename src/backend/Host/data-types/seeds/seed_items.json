@@ -1,0 +1,23 @@
+{
+  "entity": "Item",
+  "table": "items",
+  "tenant_id": "f77dbedd-64ff-41ac-b77a-0731183ff744",
+  "_comment": "DEC-086: 15 inventory items. item_type=1 (Stock=Raw Material), costing_method=3 (Average). company_id set to ALF at insert time.",
+  "records": [
+    { "sku": "SKU-0001", "barcode": "2000000001", "name": "إسمنت",                    "item_type": 1, "costing_method": 3, "average_cost": 50,  "standard_cost": 55,  "reorder_level": 100, "reorder_quantity": 500, "is_active": true },
+    { "sku": "SKU-0002", "barcode": "2000000002", "name": "حديد",                    "item_type": 1, "costing_method": 3, "average_cost": 800, "standard_cost": 850, "reorder_level": 50,  "reorder_quantity": 200, "is_active": true },
+    { "sku": "SKU-0003", "barcode": "2000000003", "name": "رمل",                     "item_type": 1, "costing_method": 3, "average_cost": 30,  "standard_cost": 35,  "reorder_level": 200, "reorder_quantity": 1000,"is_active": true },
+    { "sku": "SKU-0004", "barcode": "2000000004", "name": "حصى",                     "item_type": 1, "costing_method": 3, "average_cost": 25,  "standard_cost": 28,  "reorder_level": 200, "reorder_quantity": 1000,"is_active": true },
+    { "sku": "SKU-0005", "barcode": "2000000005", "name": "بلاط",                    "item_type": 1, "costing_method": 3, "average_cost": 45,  "standard_cost": 50,  "reorder_level": 100, "reorder_quantity": 500, "is_active": true },
+    { "sku": "SKU-0006", "barcode": "2000000006", "name": "دهان",                    "item_type": 1, "costing_method": 3, "average_cost": 35,  "standard_cost": 40,  "reorder_level": 80,  "reorder_quantity": 300, "is_active": true },
+    { "sku": "SKU-0007", "barcode": "2000000007", "name": "أجهزة مكتبية",           "item_type": 2, "costing_method": 3, "average_cost": 500, "standard_cost": 600, "reorder_level": 20,  "reorder_quantity": 50,  "is_active": true },
+    { "sku": "SKU-0008", "barcode": "2000000008", "name": "قرطاسية",                 "item_type": 1, "costing_method": 3, "average_cost": 5,   "standard_cost": 7,   "reorder_level": 500, "reorder_quantity": 2000,"is_active": true },
+    { "sku": "SKU-0009", "barcode": "2000000009", "name": "معدات نظافة",            "item_type": 1, "costing_method": 3, "average_cost": 20,  "standard_cost": 25,  "reorder_level": 100, "reorder_quantity": 300, "is_active": true },
+    { "sku": "SKU-0010", "barcode": "2000000010", "name": "مواد غذائية",             "item_type": 1, "costing_method": 3, "average_cost": 8,   "standard_cost": 10,  "reorder_level": 300, "reorder_quantity": 1000,"is_active": true },
+    { "sku": "SKU-0011", "barcode": "2000000011", "name": "إسمنت أبيض",             "item_type": 1, "costing_method": 3, "average_cost": 70,  "standard_cost": 75,  "reorder_level": 50,  "reorder_quantity": 200, "is_active": true },
+    { "sku": "SKU-0012", "barcode": "2000000012", "name": "حديد تسليح 12مم",       "item_type": 1, "costing_method": 3, "average_cost": 850, "standard_cost": 900, "reorder_level": 30,  "reorder_quantity": 150, "is_active": true },
+    { "sku": "SKU-0013", "barcode": "2000000013", "name": "دهان أكريليك",            "item_type": 1, "costing_method": 3, "average_cost": 45,  "standard_cost": 50,  "reorder_level": 50,  "reorder_quantity": 200, "is_active": true },
+    { "sku": "SKU-0014", "barcode": "2000000014", "name": "ورق طباعة A4",            "item_type": 1, "costing_method": 3, "average_cost": 4,   "standard_cost": 5,   "reorder_level": 500, "reorder_quantity": 2000,"is_active": true },
+    { "sku": "SKU-0015", "barcode": "2000000015", "name": "منظفات صناعية",          "item_type": 1, "costing_method": 3, "average_cost": 12,  "standard_cost": 15,  "reorder_level": 100, "reorder_quantity": 400, "is_active": true }
+  ]
+}

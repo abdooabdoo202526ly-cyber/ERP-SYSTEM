@@ -1,0 +1,26 @@
+{
+  "name": "StockLevel",
+  "table": "stock_levels",
+  "version": "1.0.0",
+  "module": "Inventory",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "tenant_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "tenants", "column": "id", "on_delete": "cascade" } },
+    { "name": "company_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "companies", "column": "id", "on_delete": "restrict" } },
+    { "name": "item_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "items", "column": "id", "on_delete": "restrict" } },
+    { "name": "warehouse_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "warehouses", "column": "id", "on_delete": "restrict" } },
+    { "name": "quantity_on_hand", "type": "numeric(18,4)", "nullable": false, "default": "0" },
+    { "name": "quantity_reserved", "type": "numeric(18,4)", "nullable": false, "default": "0" },
+    { "name": "average_cost", "type": "numeric(18,4)", "nullable": false, "default": "0" },
+    { "name": "last_movement_at", "type": "timestamptz", "nullable": false },
+    { "name": "version", "type": "integer", "nullable": false, "default": "0" }
+  ],
+  "indexes": [
+    { "name": "ix_stock_levels_tenant_item_warehouse", "columns": ["tenant_id", "item_id", "warehouse_id"], "unique": true },
+    { "name": "ix_stock_levels_tenant_company", "columns": ["tenant_id", "company_id"] }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "name": "Resource",
+  "table": "resources",
+  "version": "1.0.0",
+  "module": "Projects",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "tenant_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "tenants", "column": "id", "on_delete": "cascade" } },
+    { "name": "code", "type": "varchar(50)", "nullable": false },
+    { "name": "name", "type": "varchar(200)", "nullable": false },
+    { "name": "type", "type": "integer", "nullable": false, "default": "1" },
+    { "name": "hourly_rate", "type": "numeric(18,4)", "nullable": false, "default": "0" },
+    { "name": "is_active", "type": "boolean", "nullable": false, "default": "true" },
+    { "name": "created_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "updated_at", "type": "timestamptz", "nullable": false, "default": "now()" }
+  ],
+  "indexes": [
+    { "name": "ix_resources_tenant_code", "columns": ["tenant_id", "code"], "unique": true },
+    { "name": "ix_resources_tenant_active", "columns": ["tenant_id", "is_active"] }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "name": "RefreshToken",
+  "table": "refresh_tokens",
+  "version": "1.0.0",
+  "module": "Identity",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "user_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "users", "column": "id", "on_delete": "cascade" } },
+    { "name": "token_hash", "type": "varchar(500)", "nullable": false },
+    { "name": "expires_at", "type": "timestamptz", "nullable": false },
+    { "name": "created_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "revoked_at", "type": "timestamptz", "nullable": true },
+    { "name": "replaced_by_token_hash", "type": "varchar(500)", "nullable": true },
+    { "name": "revoked_reason", "type": "varchar(200)", "nullable": true },
+    { "name": "created_by_ip", "type": "varchar(45)", "nullable": true },
+    { "name": "revoked_by_ip", "type": "varchar(45)", "nullable": true }
+  ],
+  "indexes": [
+    { "name": "ix_refresh_tokens_user", "columns": ["user_id"] },
+    { "name": "ix_refresh_tokens_hash", "columns": ["token_hash"], "unique": true }
+  ]
+}

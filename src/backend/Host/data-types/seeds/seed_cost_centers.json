@@ -1,0 +1,11 @@
+{
+  "entity": "CostCenter",
+  "table": "cost_centers",
+  "tenant_id": "f77dbedd-64ff-41ac-b77a-0731183ff744",
+  "_comment": "DEC-089: 3 cost centers. type: 0=Department, 1=Project, 2=Activity.",
+  "records": [
+    { "code": "CC-001", "name": "مركز تكلفة الإدارة العامة",     "type": 0, "budget_amount": 50000.00, "start_date": "2024-01-01", "end_date": "2026-12-31", "is_active": true },
+    { "code": "CC-002", "name": "مركز تكلفة المشاريع",           "type": 1, "budget_amount": 200000.00, "start_date": "2024-01-01", "end_date": "2026-12-31", "is_active": true },
+    { "code": "CC-003", "name": "مركز تكلفة الصيانة",            "type": 2, "budget_amount": 80000.00, "start_date": "2024-01-01", "end_date": "2026-12-31", "is_active": true }
+  ]
+}

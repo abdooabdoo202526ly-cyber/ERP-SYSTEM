@@ -1,0 +1,37 @@
+{
+  "name": "Payment",
+  "table": "payments",
+  "version": "1.0.0",
+  "module": "Payments",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "tenant_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "tenants", "column": "id", "on_delete": "cascade" } },
+    { "name": "company_id", "type": "uuid", "nullable": true,
+      "foreign_key": { "table": "companies", "column": "id", "on_delete": "set_null" } },
+    { "name": "party_type", "type": "varchar(20)", "nullable": false },
+    { "name": "party_id", "type": "uuid", "nullable": false },
+    { "name": "payment_number", "type": "varchar(50)", "nullable": false },
+    { "name": "payment_date", "type": "timestamptz", "nullable": false },
+    { "name": "amount", "type": "numeric(18,4)", "nullable": false },
+    { "name": "currency_code", "type": "varchar(3)", "nullable": false, "default": "'LYD'" },
+    { "name": "payment_method", "type": "varchar(20)", "nullable": false, "default": "'Cash'" },
+    { "name": "bank_account_id", "type": "uuid", "nullable": true },
+    { "name": "notes", "type": "varchar(1000)", "nullable": true },
+    { "name": "status", "type": "integer", "nullable": false, "default": "1" },
+    { "name": "posted_at", "type": "timestamptz", "nullable": true },
+    { "name": "posted_by", "type": "uuid", "nullable": true },
+    { "name": "journal_entry_id", "type": "uuid", "nullable": true,
+      "foreign_key": { "table": "journal_entries", "column": "id", "on_delete": "set_null" } },
+    { "name": "created_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "created_by", "type": "uuid", "nullable": false },
+    { "name": "updated_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "updated_by", "type": "uuid", "nullable": true }
+  ],
+  "indexes": [
+    { "name": "ix_payments_tenant_number", "columns": ["tenant_id", "payment_number"], "unique": true },
+    { "name": "ix_payments_tenant_party", "columns": ["tenant_id", "party_type", "party_id"] },
+    { "name": "ix_payments_tenant_status", "columns": ["tenant_id", "status"] },
+    { "name": "ix_payments_tenant_date", "columns": ["tenant_id", "payment_date"] }
+  ]
+}

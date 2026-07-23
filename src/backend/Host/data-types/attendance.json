@@ -1,0 +1,22 @@
+{
+  "name": "Attendance",
+  "table": "attendance",
+  "version": "1.0.0",
+  "module": "HR",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "tenant_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "tenants", "column": "id", "on_delete": "cascade" } },
+    { "name": "employee_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "employees", "column": "id", "on_delete": "cascade" } },
+    { "name": "type", "type": "varchar(20)", "nullable": false },
+    { "name": "timestamp", "type": "timestamptz", "nullable": false },
+    { "name": "notes", "type": "varchar(500)", "nullable": true },
+    { "name": "ip_address", "type": "varchar(50)", "nullable": true },
+    { "name": "created_at", "type": "timestamptz", "nullable": false, "default": "now()" }
+  ],
+  "indexes": [
+    { "name": "ix_attendance_tenant_employee", "columns": ["tenant_id", "employee_id"] },
+    { "name": "ix_attendance_employee_ts", "columns": ["employee_id", "timestamp"] }
+  ]
+}

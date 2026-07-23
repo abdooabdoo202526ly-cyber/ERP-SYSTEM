@@ -1,0 +1,29 @@
+{
+  "name": "ResourceAssignment",
+  "table": "resource_assignments",
+  "version": "1.0.0",
+  "module": "Projects",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "tenant_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "tenants", "column": "id", "on_delete": "cascade" } },
+    { "name": "project_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "projects", "column": "id", "on_delete": "cascade" } },
+    { "name": "task_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "project_tasks", "column": "id", "on_delete": "cascade" } },
+    { "name": "resource_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "resources", "column": "id", "on_delete": "restrict" } },
+    { "name": "user_id", "type": "uuid", "nullable": true,
+      "foreign_key": { "table": "users", "column": "id", "on_delete": "set_null" } },
+    { "name": "from_ts", "type": "timestamptz", "nullable": false },
+    { "name": "to_ts", "type": "timestamptz", "nullable": false },
+    { "name": "hourly_rate", "type": "numeric(18,4)", "nullable": false, "default": "0" },
+    { "name": "created_at", "type": "timestamptz", "nullable": false, "default": "now()" }
+  ],
+  "indexes": [
+    { "name": "ix_ras_project", "columns": ["project_id"] },
+    { "name": "ix_ras_task", "columns": ["task_id"] },
+    { "name": "ix_ras_resource", "columns": ["resource_id"] },
+    { "name": "ix_ras_tenant", "columns": ["tenant_id"] }
+  ]
+}

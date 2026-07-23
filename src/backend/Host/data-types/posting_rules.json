@@ -1,0 +1,21 @@
+{
+  "name": "PostingRule",
+  "table": "posting_rules",
+  "version": "1.0.0",
+  "module": "Finance",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "tenant_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "tenants", "column": "id", "on_delete": "cascade" } },
+    { "name": "name", "type": "varchar(200)", "nullable": false },
+    { "name": "description", "type": "varchar(500)", "nullable": true },
+    { "name": "event_type", "type": "integer", "nullable": false },
+    { "name": "is_active", "type": "boolean", "nullable": false, "default": "true" },
+    { "name": "template_json", "type": "jsonb", "nullable": false },
+    { "name": "created_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "updated_at", "type": "timestamptz", "nullable": false, "default": "now()" }
+  ],
+  "indexes": [
+    { "name": "ix_posting_rules_tenant_event", "columns": ["tenant_id", "event_type", "is_active"] }
+  ]
+}

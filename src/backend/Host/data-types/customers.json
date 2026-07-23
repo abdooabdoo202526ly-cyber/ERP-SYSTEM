@@ -1,0 +1,32 @@
+{
+  "name": "Customer",
+  "table": "customers",
+  "version": "1.0.0",
+  "module": "AccountsReceivable",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "tenant_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "tenants", "column": "id", "on_delete": "cascade" } },
+    { "name": "company_id", "type": "uuid", "nullable": true,
+      "foreign_key": { "table": "companies", "column": "id", "on_delete": "set_null" } },
+    { "name": "code", "type": "varchar(50)", "nullable": false },
+    { "name": "name", "type": "varchar(200)", "nullable": false },
+    { "name": "name_en", "type": "varchar(200)", "nullable": true },
+    { "name": "tax_id", "type": "varchar(50)", "nullable": true },
+    { "name": "email", "type": "varchar(200)", "nullable": true },
+    { "name": "phone", "type": "varchar(50)", "nullable": true },
+    { "name": "address", "type": "text", "nullable": true },
+    { "name": "credit_limit", "type": "numeric(18,4)", "nullable": true },
+    { "name": "payment_terms_days", "type": "integer", "nullable": false, "default": "30" },
+    { "name": "is_active", "type": "boolean", "nullable": false, "default": "true" },
+    { "name": "created_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "created_by", "type": "uuid", "nullable": false },
+    { "name": "updated_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "updated_by", "type": "uuid", "nullable": true },
+    { "name": "deleted_at", "type": "timestamptz", "nullable": true }
+  ],
+  "indexes": [
+    { "name": "ix_customers_tenant_code", "columns": ["tenant_id", "code"], "unique": true },
+    { "name": "ix_customers_tenant_company", "columns": ["tenant_id", "company_id"] }
+  ]
+}

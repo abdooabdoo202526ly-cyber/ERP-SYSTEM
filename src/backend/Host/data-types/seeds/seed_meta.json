@@ -1,0 +1,13 @@
+{
+  "entity": "Meta",
+  "table": "tenants",
+  "tenant_id": "f77dbedd-64ff-41ac-b77a-0731183ff744",
+  "tenant_name": "AlFajr Trading & Contracting",
+  "tenant_subdomain": "alfajr",
+  "admin_email": "admin@alfajr.local",
+  "admin_password": "Demo1234",
+  "base_currency": "LYD",
+  "scenario_start": "2024-07-01",
+  "scenario_end": "2026-07-01",
+  "_comment": "DEC-086: Meta file. Other seed files reference this tenant_id. To override, set tenant_id per file."
+}

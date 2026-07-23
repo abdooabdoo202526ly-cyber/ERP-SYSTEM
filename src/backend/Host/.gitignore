@@ -1,0 +1,36 @@
+## .NET / Visual Studio / Rider
+bin/
+obj/
+*.user
+*.suo
+.vs/
+.vscode/
+*.userprefs
+
+## Build results
+[Dd]ebug/
+[Rr]elease/
+[Bb]uild/
+*.dll
+*.exe
+*.pdb
+
+## NuGet
+*.nupkg
+packages/
+*.snupkg
+
+## Local config (DO NOT commit secrets!)
+appsettings.Development.json
+appsettings.Local.json
+*.env
+.env
+.env.local
+
+## Logs
+*.log
+logs/
+
+## OS
+.DS_Store
+Thumbs.db

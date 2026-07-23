@@ -1,0 +1,30 @@
+{
+  "name": "LeaveRequest",
+  "table": "leave_requests",
+  "version": "1.0.0",
+  "module": "HR",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "tenant_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "tenants", "column": "id", "on_delete": "cascade" } },
+    { "name": "employee_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "employees", "column": "id", "on_delete": "cascade" } },
+    { "name": "leave_type", "type": "varchar(20)", "nullable": false },
+    { "name": "start_date", "type": "timestamptz", "nullable": false },
+    { "name": "end_date", "type": "timestamptz", "nullable": false },
+    { "name": "total_days", "type": "integer", "nullable": false },
+    { "name": "status", "type": "varchar(20)", "nullable": false, "default": "'Pending'" },
+    { "name": "reason", "type": "text", "nullable": true },
+    { "name": "approver_id", "type": "uuid", "nullable": true },
+    { "name": "approved_at", "type": "timestamptz", "nullable": true },
+    { "name": "notes", "type": "text", "nullable": true },
+    { "name": "created_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "created_by", "type": "uuid", "nullable": false },
+    { "name": "updated_at", "type": "timestamptz", "nullable": false, "default": "now()" }
+  ],
+  "indexes": [
+    { "name": "ix_leaves_tenant_employee", "columns": ["tenant_id", "employee_id"] },
+    { "name": "ix_leaves_tenant_status", "columns": ["tenant_id", "status"] },
+    { "name": "ix_leaves_employee_dates", "columns": ["employee_id", "start_date", "end_date"] }
+  ]
+}

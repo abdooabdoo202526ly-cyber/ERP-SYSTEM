@@ -1,0 +1,23 @@
+{
+  "name": "SalaryStructure",
+  "table": "salary_structures",
+  "version": "1.0.0",
+  "module": "Payroll",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "tenant_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "tenants", "column": "id", "on_delete": "cascade" } },
+    { "name": "name", "type": "varchar(200)", "nullable": false },
+    { "name": "code", "type": "varchar(50)", "nullable": false },
+    { "name": "currency", "type": "varchar(3)", "nullable": false, "default": "'LYD'" },
+    { "name": "is_active", "type": "boolean", "nullable": false, "default": "true" },
+    { "name": "created_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "created_by", "type": "uuid", "nullable": false },
+    { "name": "updated_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "updated_by", "type": "uuid", "nullable": true }
+  ],
+  "indexes": [
+    { "name": "ix_salary_structures_tenant_code", "columns": ["tenant_id", "code"], "unique": true },
+    { "name": "ix_salary_structures_tenant_active", "columns": ["tenant_id", "is_active"] }
+  ]
+}

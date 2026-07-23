@@ -1,0 +1,32 @@
+{
+  "name": "PayrollItem",
+  "table": "payroll_items",
+  "version": "1.0.0",
+  "module": "Payroll",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "tenant_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "tenants", "column": "id", "on_delete": "cascade" } },
+    { "name": "payroll_run_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "payroll_runs", "column": "id", "on_delete": "restrict" } },
+    { "name": "employee_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "employees", "column": "id", "on_delete": "restrict" } },
+    { "name": "base_salary", "type": "numeric(18,4)", "nullable": false, "default": "0" },
+    { "name": "gross_salary", "type": "numeric(18,4)", "nullable": false, "default": "0" },
+    { "name": "tax_amount", "type": "numeric(18,4)", "nullable": false, "default": "0" },
+    { "name": "social_insurance_employee", "type": "numeric(18,4)", "nullable": false, "default": "0" },
+    { "name": "net_salary", "type": "numeric(18,4)", "nullable": false, "default": "0" },
+    { "name": "status", "type": "varchar(20)", "nullable": false, "default": "'Draft'" },
+    { "name": "payment_days", "type": "integer", "nullable": false, "default": "30" },
+    { "name": "notes", "type": "varchar(500)", "nullable": true },
+    { "name": "created_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "created_by", "type": "uuid", "nullable": false },
+    { "name": "updated_at", "type": "timestamptz", "nullable": false, "default": "now()" }
+  ],
+  "indexes": [
+    { "name": "ix_payroll_items_tenant_run", "columns": ["tenant_id", "payroll_run_id"] },
+    { "name": "ix_payroll_items_tenant_employee", "columns": ["tenant_id", "employee_id"] },
+    { "name": "ix_payroll_items_tenant_status", "columns": ["tenant_id", "status"] },
+    { "name": "ix_payroll_items_run_employee", "columns": ["payroll_run_id", "employee_id"], "unique": true }
+  ]
+}

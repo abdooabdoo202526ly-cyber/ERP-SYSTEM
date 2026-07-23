@@ -1,0 +1,28 @@
+{
+  "entity": "Customer",
+  "table": "customers",
+  "tenant_id": "f77dbedd-64ff-41ac-b77a-0731183ff744",
+  "_comment": "DEC-086: 20 customers (Libyan public/government + private orgs). company_id is set from ALF (AlFajr Holding).",
+  "records": [
+    { "code": "CUST-001", "name": "وزارة الإسكان",                  "email": "housing@gov.ly",     "phone": "+218921000001", "address": "طرابلس - وزارة الإسكان",        "tax_id": "TAX-GOV-001", "credit_limit": 1000000, "payment_terms_days": 60, "is_active": true },
+    { "code": "CUST-002", "name": "شركة الإنماء للمقاولات",           "email": "inma@example.ly",     "phone": "+218921000002", "address": "طرابلس - شارع الإنماء",          "tax_id": "TAX-PRV-002", "credit_limit": 500000,  "payment_terms_days": 30, "is_active": true },
+    { "code": "CUST-003", "name": "مؤسسة النفط الليبية",              "email": "oil@gov.ly",          "phone": "+218921000003", "address": "طرابلس - مقر المؤسسة",          "tax_id": "TAX-GOV-003", "credit_limit": 2000000, "payment_terms_days": 90, "is_active": true },
+    { "code": "CUST-004", "name": "بلدية طرابلس المركز",             "email": "baladiya@gov.ly",     "phone": "+218921000004", "address": "طرابلس - البلدية",                "tax_id": "TAX-GOV-004", "credit_limit": 800000,  "payment_terms_days": 60, "is_active": true },
+    { "code": "CUST-005", "name": "هيئة الطرق والجسور",                "email": "roads@gov.ly",        "phone": "+218921000005", "address": "طرابلس - هيئة الطرق",            "tax_id": "TAX-GOV-005", "credit_limit": 1500000, "payment_terms_days": 60, "is_active": true },
+    { "code": "CUST-006", "name": "مصرف ليبيا المركزي",                "email": "cbl@gov.ly",          "phone": "+218921000006", "address": "طرابلس - المصرف المركزي",        "tax_id": "TAX-GOV-006", "credit_limit": 500000,  "payment_terms_days": 30, "is_active": true },
+    { "code": "CUST-007", "name": "شركة البريقة لتسويق النفط",        "email": "bourika@example.ly",  "phone": "+218921000007", "address": "طرابلس - البريقة",                "tax_id": "TAX-PRV-007", "credit_limit": 1000000, "payment_terms_days": 30, "is_active": true },
+    { "code": "CUST-008", "name": "مجمع الفاتح التجاري",              "email": "fatih@example.ly",    "phone": "+218921000008", "address": "طرابلس - مجمع الفاتح",          "tax_id": "TAX-PRV-008", "credit_limit": 200000,  "payment_terms_days": 30, "is_active": true },
+    { "code": "CUST-009", "name": "فندق كورنثيا طرابلس",            "email": "kornthia@example.ly", "phone": "+218921000009", "address": "طرابلس - الفندق",                "tax_id": "TAX-PRV-009", "credit_limit": 300000,  "payment_terms_days": 30, "is_active": true },
+    { "code": "CUST-010", "name": "مستشفى طرابلس المركزي",            "email": "hospital@gov.ly",     "phone": "+218921000010", "address": "طرابلس - المستشفى",              "tax_id": "TAX-GOV-010", "credit_limit": 500000,  "payment_terms_days": 60, "is_active": true },
+    { "code": "CUST-011", "name": "شركة البناء الحديثة",              "email": "build@example.ly",    "phone": "+218921000011", "address": "طرابلس - منطقة البناء",          "tax_id": "TAX-PRV-011", "credit_limit": 400000,  "payment_terms_days": 30, "is_active": true },
+    { "code": "CUST-012", "name": "مكتب الاستشارات الهندسية",        "email": "consult@example.ly",  "phone": "+218921000012", "address": "طرابلس - شارع الاستشارات",      "tax_id": "TAX-PRV-012", "credit_limit": 150000,  "payment_terms_days": 30, "is_active": true },
+    { "code": "CUST-013", "name": "شركة اللوجستيات المتقدمة",        "email": "logistics@example.ly","phone": "+218921000013", "address": "طرابلس - المنطقة الحرة",         "tax_id": "TAX-PRV-013", "credit_limit": 250000,  "payment_terms_days": 30, "is_active": true },
+    { "code": "CUST-014", "name": "مركز التدريب المهني",              "email": "training@gov.ly",     "phone": "+218921000014", "address": "طرابلس - مركز التدريب",          "tax_id": "TAX-GOV-014", "credit_limit": 100000,  "payment_terms_days": 60, "is_active": true },
+    { "code": "CUST-015", "name": "شركة الأثاث المكتبي",              "email": "furniture@example.ly","phone": "+218921000015", "address": "طرابلس - سوق الأثاث",            "tax_id": "TAX-PRV-015", "credit_limit": 80000,   "payment_terms_days": 30, "is_active": true },
+    { "code": "CUST-016", "name": "مكتب المحاماة الدولي",            "email": "law@example.ly",      "phone": "+218921000016", "address": "طرابلس - مجمع المحاكم",          "tax_id": "TAX-PRV-016", "credit_limit": 200000,  "payment_terms_days": 30, "is_active": true },
+    { "code": "CUST-017", "name": "مركز الأبحاث العلمية",            "email": "research@gov.ly",    "phone": "+218921000017", "address": "طرابلس - مركز الأبحاث",          "tax_id": "TAX-GOV-017", "credit_limit": 500000,  "payment_terms_days": 60, "is_active": true },
+    { "code": "CUST-018", "name": "شركة تقنيات البناء الذكية",        "email": "smart@example.ly",   "phone": "+218921000018", "address": "طرابلس - حي التقنية",            "tax_id": "TAX-PRV-018", "credit_limit": 300000,  "payment_terms_days": 30, "is_active": true },
+    { "code": "CUST-019", "name": "مؤسسة الرعاية الاجتماعية",        "email": "welfare@gov.ly",     "phone": "+218921000019", "address": "طرابلس - مؤسسة الرعاية",        "tax_id": "TAX-GOV-019", "credit_limit": 150000,  "payment_terms_days": 60, "is_active": true },
+    { "code": "CUST-020", "name": "شركة الصيانة الذكية",              "email": "smartmaint@example.ly","phone": "+218921000020", "address": "طرابلس - شارع الصيانة",        "tax_id": "TAX-PRV-020", "credit_limit": 100000,  "payment_terms_days": 30, "is_active": true }
+  ]
+}

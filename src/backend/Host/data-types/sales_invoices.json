@@ -1,0 +1,43 @@
+{
+  "name": "SalesInvoice",
+  "table": "sales_invoices",
+  "version": "1.0.0",
+  "module": "AccountsReceivable",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "tenant_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "tenants", "column": "id", "on_delete": "cascade" } },
+    { "name": "company_id", "type": "uuid", "nullable": true,
+      "foreign_key": { "table": "companies", "column": "id", "on_delete": "set_null" } },
+    { "name": "customer_id", "type": "uuid", "nullable": true,
+      "foreign_key": { "table": "customers", "column": "id", "on_delete": "set_null" } },
+    { "name": "invoice_number", "type": "varchar(50)", "nullable": false },
+    { "name": "invoice_date", "type": "timestamptz", "nullable": false },
+    { "name": "due_date", "type": "timestamptz", "nullable": true },
+    { "name": "currency_code", "type": "varchar(3)", "nullable": false, "default": "'LYD'" },
+    { "name": "exchange_rate", "type": "numeric(18,6)", "nullable": false, "default": "1" },
+    { "name": "subtotal", "type": "numeric(18,4)", "nullable": false, "default": "0" },
+    { "name": "tax_amount", "type": "numeric(18,4)", "nullable": false, "default": "0" },
+    { "name": "total_amount", "type": "numeric(18,4)", "nullable": false, "default": "0" },
+    { "name": "paid_amount", "type": "numeric(18,4)", "nullable": false, "default": "0" },
+    { "name": "outstanding", "type": "numeric(18,4)", "nullable": false, "default": "0" },
+    { "name": "status", "type": "varchar(20)", "nullable": false, "default": "'Draft'" },
+    { "name": "notes", "type": "text", "nullable": true },
+    { "name": "project_id", "type": "uuid", "nullable": true,
+      "foreign_key": { "table": "projects", "column": "id", "on_delete": "set_null" } },
+    { "name": "posted_at", "type": "timestamptz", "nullable": true },
+    { "name": "posted_by", "type": "uuid", "nullable": true },
+    { "name": "created_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "created_by", "type": "uuid", "nullable": false },
+    { "name": "updated_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "updated_by", "type": "uuid", "nullable": true },
+    { "name": "journal_entry_id", "type": "uuid", "nullable": true,
+      "foreign_key": { "table": "journal_entries", "column": "id", "on_delete": "set_null" } }
+  ],
+  "indexes": [
+    { "name": "ix_si_tenant_invoiceno", "columns": ["tenant_id", "invoice_number"], "unique": true },
+    { "name": "ix_si_tenant_customer", "columns": ["tenant_id", "customer_id"] },
+    { "name": "ix_si_tenant_status", "columns": ["tenant_id", "status"] },
+    { "name": "ix_si_tenant_company", "columns": ["tenant_id", "company_id"] }
+  ]
+}

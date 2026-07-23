@@ -1,0 +1,25 @@
+{
+  "name": "SalesInvoiceLine",
+  "table": "sales_invoice_lines",
+  "version": "1.0.0",
+  "module": "AccountsReceivable",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "tenant_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "tenants", "column": "id", "on_delete": "cascade" } },
+    { "name": "sales_invoice_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "sales_invoices", "column": "id", "on_delete": "cascade" } },
+    { "name": "item_id", "type": "uuid", "nullable": true,
+      "foreign_key": { "table": "items", "column": "id", "on_delete": "set_null" } },
+    { "name": "description", "type": "varchar(500)", "nullable": false },
+    { "name": "line_number", "type": "integer", "nullable": false, "default": "0" },
+    { "name": "quantity", "type": "numeric(18,4)", "nullable": false },
+    { "name": "unit_price", "type": "numeric(18,4)", "nullable": false },
+    { "name": "tax_rate", "type": "numeric(6,4)", "nullable": false, "default": "0" },
+    { "name": "line_total", "type": "numeric(18,4)", "nullable": false }
+  ],
+  "indexes": [
+    { "name": "ix_si_lines_invoice", "columns": ["sales_invoice_id"] },
+    { "name": "ix_si_lines_item", "columns": ["item_id"] }
+  ]
+}

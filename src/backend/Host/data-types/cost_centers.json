@@ -1,0 +1,33 @@
+{
+  "name": "CostCenter",
+  "table": "cost_centers",
+  "version": "1.0.0",
+  "module": "Companies",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "tenant_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "tenants", "column": "id", "on_delete": "cascade" } },
+    { "name": "company_id", "type": "uuid", "nullable": true,
+      "foreign_key": { "table": "companies", "column": "id", "on_delete": "set_null" } },
+    { "name": "code", "type": "varchar(20)", "nullable": false },
+    { "name": "name", "type": "varchar(200)", "nullable": false },
+    { "name": "type", "type": "integer", "nullable": false },
+    { "name": "parent_id", "type": "uuid", "nullable": true,
+      "foreign_key": { "table": "cost_centers", "column": "id", "on_delete": "set_null" } },
+    { "name": "budget_amount", "type": "numeric(18,4)", "nullable": true },
+    { "name": "start_date", "type": "timestamptz", "nullable": true },
+    { "name": "end_date", "type": "timestamptz", "nullable": true },
+    { "name": "sku", "type": "varchar(50)", "nullable": true },
+    { "name": "location", "type": "text", "nullable": true },
+    { "name": "activity_category", "type": "varchar(50)", "nullable": true },
+    { "name": "is_active", "type": "boolean", "nullable": false, "default": "true" },
+    { "name": "created_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "updated_at", "type": "timestamptz", "nullable": false, "default": "now()" }
+  ],
+  "indexes": [
+    { "name": "ix_cc_tenant_code", "columns": ["tenant_id", "code"], "unique": true },
+    { "name": "ix_cc_tenant_type", "columns": ["tenant_id", "type"] },
+    { "name": "ix_cc_company", "columns": ["company_id"] },
+    { "name": "ix_cc_tenant_parent", "columns": ["tenant_id", "parent_id"] }
+  ]
+}

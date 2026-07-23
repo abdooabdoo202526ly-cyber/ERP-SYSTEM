@@ -1,0 +1,26 @@
+{
+  "name": "ProjectBudget",
+  "table": "project_budgets",
+  "version": "1.0.0",
+  "module": "Projects",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "tenant_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "tenants", "column": "id", "on_delete": "cascade" } },
+    { "name": "project_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "projects", "column": "id", "on_delete": "cascade" } },
+    { "name": "cost_center_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "cost_centers", "column": "id", "on_delete": "restrict" } },
+    { "name": "account_id", "type": "uuid", "nullable": true,
+      "foreign_key": { "table": "accounts", "column": "id", "on_delete": "set_null" } },
+    { "name": "budget_amount", "type": "numeric(18,4)", "nullable": false, "default": "0" },
+    { "name": "spent_amount", "type": "numeric(18,4)", "nullable": false, "default": "0" },
+    { "name": "committed_amount", "type": "numeric(18,4)", "nullable": false, "default": "0" },
+    { "name": "last_recalculated_at", "type": "timestamptz", "nullable": true }
+  ],
+  "indexes": [
+    { "name": "ix_pb_project", "columns": ["project_id"], "unique": true },
+    { "name": "ix_pb_costcenter", "columns": ["cost_center_id"] },
+    { "name": "ix_pb_tenant", "columns": ["tenant_id"] }
+  ]
+}

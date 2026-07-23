@@ -1,0 +1,12 @@
+{
+  "entity": "Company",
+  "table": "companies",
+  "tenant_id": "f77dbedd-64ff-41ac-b77a-0731183ff744",
+  "records": [
+    { "code": "ALF",  "name": "AlFajr Trading & Contracting",  "legal_name": "AlFajr Trading & Contracting Co.",  "is_group": false, "base_currency": "LYD", "is_active": true },
+    { "code": "ALB",  "name": "AlBurj Building Materials",         "legal_name": "AlBurj Building Materials Co.",      "is_group": false, "base_currency": "LYD", "is_active": true },
+    { "code": "ALN",  "name": "AlNoor Office Supplies",           "legal_name": "AlNoor Office Supplies Co.",        "is_group": false, "base_currency": "LYD", "is_active": true },
+    { "code": "ALK",  "name": "AlKawn Food Services",             "legal_name": "AlKawn Food Services Co.",          "is_group": false, "base_currency": "LYD", "is_active": true },
+    { "code": "ALKH", "name": "AlNakhla Tourism & Cleaning",     "legal_name": "AlNakhla Tourism & Cleaning Co.",  "is_group": false, "base_currency": "LYD", "is_active": true }
+  ]
+}

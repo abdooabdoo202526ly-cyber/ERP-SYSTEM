@@ -1,0 +1,33 @@
+{
+  "name": "Employee",
+  "table": "employees",
+  "version": "1.0.0",
+  "module": "HR",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "tenant_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "tenants", "column": "id", "on_delete": "cascade" } },
+    { "name": "employee_number", "type": "varchar(50)", "nullable": false },
+    { "name": "full_name", "type": "varchar(200)", "nullable": false },
+    { "name": "email", "type": "varchar(200)", "nullable": true },
+    { "name": "phone", "type": "varchar(50)", "nullable": true },
+    { "name": "national_id", "type": "varchar(50)", "nullable": true },
+    { "name": "department_id", "type": "uuid", "nullable": true,
+      "foreign_key": { "table": "departments", "column": "id", "on_delete": "set_null" } },
+    { "name": "job_title", "type": "varchar(100)", "nullable": true },
+    { "name": "hire_date", "type": "timestamptz", "nullable": false },
+    { "name": "termination_date", "type": "timestamptz", "nullable": true },
+    { "name": "base_salary", "type": "numeric(18,4)", "nullable": false, "default": "0" },
+    { "name": "is_active", "type": "boolean", "nullable": false, "default": "true" },
+    { "name": "created_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "created_by", "type": "uuid", "nullable": false },
+    { "name": "updated_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "updated_by", "type": "uuid", "nullable": true }
+  ],
+  "indexes": [
+    { "name": "ix_employees_tenant_number", "columns": ["tenant_id", "employee_number"], "unique": true },
+    { "name": "ix_employees_tenant_email", "columns": ["tenant_id", "email"] },
+    { "name": "ix_employees_tenant_department", "columns": ["tenant_id", "department_id"] },
+    { "name": "ix_employees_tenant_active", "columns": ["tenant_id", "is_active"] }
+  ]
+}

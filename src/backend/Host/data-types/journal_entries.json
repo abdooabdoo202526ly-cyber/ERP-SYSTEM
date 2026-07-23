@@ -1,0 +1,28 @@
+{
+  "name": "JournalEntry",
+  "table": "journal_entries",
+  "version": "1.0.0",
+  "module": "Finance",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "tenant_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "tenants", "column": "id", "on_delete": "cascade" } },
+    { "name": "entry_number", "type": "varchar(50)", "nullable": false },
+    { "name": "entry_date", "type": "timestamptz", "nullable": false },
+    { "name": "description", "type": "varchar(500)", "nullable": false },
+    { "name": "reference", "type": "varchar(200)", "nullable": true },
+    { "name": "status", "type": "integer", "nullable": false, "default": "1" },
+    { "name": "created_by_user_id", "type": "uuid", "nullable": false },
+    { "name": "company_id", "type": "uuid", "nullable": true,
+      "foreign_key": { "table": "companies", "column": "id", "on_delete": "set_null" } },
+    { "name": "posted_at", "type": "timestamptz", "nullable": true },
+    { "name": "created_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "updated_at", "type": "timestamptz", "nullable": false, "default": "now()" }
+  ],
+  "indexes": [
+    { "name": "ix_journal_entries_tenant_number", "columns": ["tenant_id", "entry_number"], "unique": true },
+    { "name": "ix_journal_entries_tenant_date", "columns": ["tenant_id", "entry_date"] },
+    { "name": "ix_journal_entries_status", "columns": ["tenant_id", "status"] },
+    { "name": "ix_je_company", "columns": ["company_id"] }
+  ]
+}

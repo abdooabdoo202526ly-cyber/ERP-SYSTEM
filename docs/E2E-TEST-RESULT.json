@@ -1,0 +1,68 @@
+﻿[
+    {
+        "Step":  "1. Login",
+        "Endpoint":  "POST /api/auth/login",
+        "Status":  "OK",
+        "Detail":  "JWT issued"
+    },
+    {
+        "Step":  "2. List vendors",
+        "Endpoint":  "GET /api/procurement/vendors",
+        "Status":  "OK",
+        "Detail":  "returned 1"
+    },
+    {
+        "Step":  "3. List employees",
+        "Endpoint":  "GET /api/hr/employees",
+        "Status":  "OK",
+        "Detail":  "returned 1"
+    },
+    {
+        "Step":  "4. Create department",
+        "Endpoint":  "POST /api/hr/departments",
+        "Status":  "OK",
+        "Detail":  "created 3389081c-799e-4bd7-a53b-e7c603d49bed"
+    },
+    {
+        "Step":  "5. CheckIn",
+        "Endpoint":  "POST /api/hr/attendance",
+        "Status":  "OK",
+        "Detail":  "recorded"
+    },
+    {
+        "Step":  "6. List POs",
+        "Endpoint":  "GET /api/procurement/purchase-orders",
+        "Status":  "?",
+        "Detail":  "The remote server returned an error: (404) Not Found."
+    },
+    {
+        "Step":  "7. Frontend home",
+        "Endpoint":  "GET /",
+        "Status":  "OK",
+        "Detail":  "200"
+    },
+    {
+        "Step":  "8. Login page",
+        "Endpoint":  "GET /login",
+        "Status":  "OK",
+        "Detail":  "200"
+    },
+    {
+        "Step":  "9. Vendors page",
+        "Endpoint":  "GET /procurement/vendors",
+        "Status":  "OK",
+        "Detail":  "200"
+    },
+    {
+        "Step":  "10. Employees page",
+        "Endpoint":  "GET /hr/employees",
+        "Status":  "OK",
+        "Detail":  "200"
+    }
+]
+{
+    "Endpoint":  "GET /api/procurement/pos",
+    "Step":  11,
+    "Detail":  "returned 0",
+    "Status":  "OK"
+}

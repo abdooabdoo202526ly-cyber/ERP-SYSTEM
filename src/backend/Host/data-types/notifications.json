@@ -1,0 +1,27 @@
+{
+  "name": "Notification",
+  "table": "notifications",
+  "version": "1.0.0",
+  "module": "Inventory",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "tenant_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "tenants", "column": "id", "on_delete": "cascade" } },
+    { "name": "user_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "users", "column": "id", "on_delete": "cascade" } },
+    { "name": "type", "type": "varchar(50)", "nullable": false },
+    { "name": "title", "type": "varchar(200)", "nullable": false },
+    { "name": "message", "type": "text", "nullable": false },
+    { "name": "reference_type", "type": "varchar(50)", "nullable": true },
+    { "name": "reference_id", "type": "uuid", "nullable": true },
+    { "name": "is_read", "type": "boolean", "nullable": false, "default": "false" },
+    { "name": "created_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "read_at", "type": "timestamptz", "nullable": true }
+  ],
+  "indexes": [
+    { "name": "ix_notifications_tenant_user", "columns": ["tenant_id", "user_id"] },
+    { "name": "ix_notifications_tenant_user_unread", "columns": ["tenant_id", "user_id", "is_read"] },
+    { "name": "ix_notifications_tenant_type", "columns": ["tenant_id", "type"] },
+    { "name": "ix_notifications_tenant_created", "columns": ["tenant_id", "created_at"] }
+  ]
+}

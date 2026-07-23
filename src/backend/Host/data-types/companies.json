@@ -1,0 +1,28 @@
+{
+  "name": "Company",
+  "table": "companies",
+  "version": "1.0.0",
+  "module": "Companies",
+  "fields": [
+    { "name": "id", "type": "uuid", "nullable": false, "primary_key": true },
+    { "name": "tenant_id", "type": "uuid", "nullable": false,
+      "foreign_key": { "table": "tenants", "column": "id", "on_delete": "cascade" } },
+    { "name": "code", "type": "varchar(20)", "nullable": false },
+    { "name": "name", "type": "varchar(200)", "nullable": false },
+    { "name": "legal_name", "type": "varchar(200)", "nullable": true },
+    { "name": "parent_company_id", "type": "uuid", "nullable": true,
+      "foreign_key": { "table": "companies", "column": "id", "on_delete": "set_null" } },
+    { "name": "is_group", "type": "boolean", "nullable": false, "default": "false" },
+    { "name": "base_currency", "type": "varchar(3)", "nullable": false, "default": "'LYD'" },
+    { "name": "tax_id", "type": "varchar(50)", "nullable": true },
+    { "name": "phone", "type": "varchar(50)", "nullable": true },
+    { "name": "email", "type": "varchar(200)", "nullable": true },
+    { "name": "address", "type": "text", "nullable": true },
+    { "name": "is_active", "type": "boolean", "nullable": false, "default": "true" },
+    { "name": "created_at", "type": "timestamptz", "nullable": false, "default": "now()" },
+    { "name": "updated_at", "type": "timestamptz", "nullable": false, "default": "now()" }
+  ],
+  "indexes": [
+    { "name": "ix_companies_tenant_code", "columns": ["tenant_id", "code"], "unique": true }
+  ]
+}
