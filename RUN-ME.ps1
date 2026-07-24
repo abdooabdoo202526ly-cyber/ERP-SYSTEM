@@ -1,8 +1,5 @@
 # =============================================================================
-# ERP-SYSTEM - RUN-ME.PS1 (Native mode, no Docker)
-# =============================================================================
-# Click في File Explorer: "Run with PowerShell"
-# أو من PowerShell: .\RUN-ME.ps1
+# ERP-SYSTEM - RUN-ME.PS1 (Native mode, no Docker, no recursion)
 # =============================================================================
 
 [CmdletBinding()]
@@ -10,9 +7,14 @@ param()
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
+function Write-Step($msg)  { Write-Host "[*] $msg" -ForegroundColor Cyan }
+function Write-Ok($msg)    { Write-Host "[+] $msg" -ForegroundColor Green }
+function Write-Warn($msg)  { Write-Host "[!] $msg" -ForegroundColor Yellow }
+function Write-Fail($msg)  { Write-Host "[X] $msg" -ForegroundColor Red }
+
 Write-Host ""
 Write-Host "============================================================" -ForegroundColor Cyan
-Write-Host "        ERP-SYSTEM (Native Mode - No Docker required)" -ForegroundColor Cyan
+Write-Host "        ERP-SYSTEM (Native Mode - No Docker)" -ForegroundColor Cyan
 Write-Host "============================================================" -ForegroundColor Cyan
 Write-Host ""
 
@@ -28,30 +30,28 @@ function Test-Tool($name, $command) {
 }
 
 Write-Host "Pre-flight checks:" -ForegroundColor Cyan
-$hasDotnet = Test-Tool ".NET 9 SDK    (dotnet --version)" "dotnet"
-$hasNode   = Test-Tool "Node.js 20+   (node --version)" "node"
-$hasPsql   = Test-Tool "PostgreSQL psql (psql --version)" "psql"
+$hasDotnet = Test-Tool ".NET 9 SDK" "dotnet"
+$hasNode   = Test-Tool "Node.js 20+" "node"
+$hasPsql   = Test-Tool "PostgreSQL psql" "psql"
 Write-Host ""
 
 if (-not $hasDotnet) {
-    Write-Host "Install .NET 9 from: https://dot.net" -ForegroundColor Yellow
+    Write-Warn "Install .NET 9 from: https://dot.net"
 }
 if (-not $hasNode) {
-    Write-Host "Install Node.js 20+ from: https://nodejs.org" -ForegroundColor Yellow
+    Write-Warn "Install Node.js 20+ from: https://nodejs.org"
 }
 if (-not $hasPsql) {
-    Write-Host "Install PostgreSQL 15+ from: https://www.postgresql.org/download/windows/" -ForegroundColor Yellow
-    Write-Host "Then add psql to PATH: `$env:Path += ';C:\Program Files\PostgreSQL\15\bin'" -ForegroundColor Yellow
+    Write-Warn "Install PostgreSQL 15+ from: https://www.postgresql.org/download/windows/"
+    Write-Host "  Then add to PATH: `$env:Path += ';C:\Program Files\PostgreSQL\15\bin'" -ForegroundColor Yellow
 }
 
 if (-not $hasDotnet -or -not $hasNode) {
     Write-Host ""
-    Write-Host "Install missing tools and re-run." -ForegroundColor Red
-    Read-Host "Press Enter to exit"
-    exit 1
+    Write-Fail "Install missing tools and re-run."
 }
 
-Write-Host "[*] Starting ERP-SYSTEM..." -ForegroundColor Cyan
+Write-Step "Starting ERP-SYSTEM in Native mode..."
 Write-Host ""
 Write-Host "  Frontend:  http://localhost:3000" -ForegroundColor Cyan
 Write-Host "  Backend:   http://localhost:5000" -ForegroundColor Cyan
@@ -61,5 +61,5 @@ Write-Host ""
 Write-Host "Press Ctrl+C to stop." -ForegroundColor Yellow
 Write-Host ""
 
-# Run the start script in Native mode
-& "$ScriptDir\scripts\start.ps1" -ForceNative
+# Directly call start-native.ps1 (no recursion, no Docker)
+& "$ScriptDir\scripts\start-native.ps1"
