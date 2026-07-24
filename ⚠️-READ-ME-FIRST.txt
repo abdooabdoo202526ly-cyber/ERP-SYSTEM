@@ -1,0 +1,27 @@
+================================================================
+  !!! IMPORTANT: READ THIS FIRST !!!
+================================================================
+
+DO NOT run quickstart.ps1 or start.ps1 directly!
+Your Docker is broken. They will fail.
+
+ONLY USE ONE OF THESE:
+
+  1. Double-click:  RUN-ME.bat          (the EASIEST way)
+  2. From PowerShell:  .\RUN-ME.ps1
+  3. Or directly:     .\scripts\start-native.ps1
+
+The native mode runs the system WITHOUT Docker.
+You only need: .NET 9, Node.js 20+, PostgreSQL 15+
+
+If RUN-ME.bat fails, read START-HERE.md for help.
+
+================================================================
+  YOUR PROBLEM:
+  Docker Desktop on your machine is broken (502 Bad Gateway,
+  I/O errors). It's not fixable from inside ERP-SYSTEM.
+
+  OUR SOLUTION:
+  We removed Docker mode from the default start script.
+  All scripts now use Native mode by default.
+================================================================
