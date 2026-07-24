@@ -128,13 +128,36 @@ Write-Step "First bytes: $($firstBytes -join ' ') (should be 23=hash, NOT EF BB 
 # ============ 3) Restart PostgreSQL ============
 Write-Step "Step 3/7: Restarting PostgreSQL service..."
 
+# v1.0.34-Hotfix11: Use net stop/start for guaranteed restart
 try {
-    Stop-Service $pgService.Name -Force -ErrorAction Stop
-    Start-Sleep 2
-    Start-Service $pgService.Name -ErrorAction Stop
-    Write-Ok "Service restarted"
+    Write-Step "Stopping PostgreSQL (net stop)..."
+    & net.exe stop $pgService.Name 2>&1 | Out-Null
+    Start-Sleep 3
+    $svc = Get-Service $pgService.Name
+    if ($svc.Status -ne "Stopped") {
+        Write-Warn "Service not stopped, trying with -Force"
+        Stop-Service $pgService.Name -Force -ErrorAction SilentlyContinue
+        Start-Sleep 3
+    }
+    Write-Ok "Stopped"
+
+    Write-Step "Starting PostgreSQL (net start)..."
+    & net.exe start $pgService.Name 2>&1 | Out-Null
+    Start-Sleep 3
+    $svc = Get-Service $pgService.Name
+    if ($svc.Status -ne "Running") {
+        Write-Warn "Service not running, trying Start-Service"
+        Start-Service $pgService.Name -ErrorAction SilentlyContinue
+        Start-Sleep 3
+    }
+    Write-Ok "Started (status: $((Get-Service $pgService.Name).Status))"
 } catch {
-    Write-Fail "Cannot restart service. Try: net stop $($pgService.Name) && net start $($pgService.Name)"
+    Write-Warn "PowerShell restart failed, using net command directly..."
+    & net.exe stop $pgService.Name 2>&1 | Out-Null
+    Start-Sleep 3
+    & net.exe start $pgService.Name 2>&1 | Out-Null
+    Start-Sleep 3
+    Write-Ok "Restarted via net command"
 }
 
 # Wait for ready
