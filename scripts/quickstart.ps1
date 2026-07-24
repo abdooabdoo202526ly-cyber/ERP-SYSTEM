@@ -122,15 +122,23 @@ if (-not $pgPort.TcpTestSucceeded) {
 Write-Ok "PostgreSQL is up on :5432"
 
 # 3) Test connection with common passwords, or ask user
-$pgPassFile = Join-Path $env:USERPROFILE ".pgpass"
+# v1.0.34-Hotfix7: On Windows, .pgpass must be at %APPDATA%\postgresql\pgpass.conf
+# NOT at ~/.pgpass (that's Unix path)
+$pgPassDir = Join-Path $env:APPDATA "postgresql"
+if (-not (Test-Path $pgPassDir)) {
+    New-Item -ItemType Directory -Path $pgPassDir -Force | Out-Null
+}
+$pgPassFile = Join-Path $pgPassDir "pgpass.conf"
+Write-Step "Using pgpass file: $pgPassFile"
+
 $connected = $false
 $usedPassword = $null
 
 $passwords = @("postgres", "admin", "password", "123456", "erp_password", "P@ssw0rd", "Postgres123")
 foreach ($pw in $passwords) {
     "localhost:5432:*:postgres:$pw" | Set-Content $pgPassFile -Force
-    $env:PGPASSFILE = $pgPassFile
     Remove-Item Env:\PGPASSWORD -ErrorAction SilentlyContinue
+    Remove-Item Env:\PGPASSFILE -ErrorAction SilentlyContinue
 
     $test = & psql -U postgres -h localhost -p 5432 -tAc "SELECT 1;" 2>&1
     if ($LASTEXITCODE -eq 0) {
@@ -152,7 +160,7 @@ if (-not $connected) {
         Write-Fail "Password cannot be empty"
     }
     "localhost:5432:*:postgres:$pw" | Set-Content $pgPassFile -Force
-    $env:PGPASSFILE = $pgPassFile
+    Remove-Item Env:\PGPASSWORD -ErrorAction SilentlyContinue
     $test = & psql -U postgres -h localhost -p 5432 -tAc "SELECT 1;" 2>&1
     if ($LASTEXITCODE -ne 0) {
         Write-Host ""
