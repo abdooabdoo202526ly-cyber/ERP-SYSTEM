@@ -122,8 +122,7 @@ if (-not $pgPort.TcpTestSucceeded) {
 Write-Ok "PostgreSQL is up on :5432"
 
 # 3) Test connection with common passwords, or ask user
-# v1.0.34-Hotfix7: On Windows, .pgpass must be at %APPDATA%\postgresql\pgpass.conf
-# NOT at ~/.pgpass (that's Unix path)
+# v1.0.34-Hotfix8: Use cmd /c wrapper to ensure env vars + exit codes work correctly
 $pgPassDir = Join-Path $env:APPDATA "postgresql"
 if (-not (Test-Path $pgPassDir)) {
     New-Item -ItemType Directory -Path $pgPassDir -Force | Out-Null
@@ -131,17 +130,28 @@ if (-not (Test-Path $pgPassDir)) {
 $pgPassFile = Join-Path $pgPassDir "pgpass.conf"
 Write-Step "Using pgpass file: $pgPassFile"
 
+# Ensure clean env (no inherited PGPASSWORD/PGPASSFILE)
+Remove-Item Env:\PGPASSWORD -ErrorAction SilentlyContinue
+Remove-Item Env:\PGPASSFILE -ErrorAction SilentlyContinue
+
 $connected = $false
 $usedPassword = $null
 
-$passwords = @("postgres", "admin", "password", "123456", "12345678", "erp_password", "P@ssw0rd", "Postgres123", "root", "qwerty", "letmein")
-foreach ($pw in $passwords) {
-    "localhost:5432:*:postgres:$pw" | Set-Content $pgPassFile -Force
-    Remove-Item Env:\PGPASSWORD -ErrorAction SilentlyContinue
-    Remove-Item Env:\PGPASSFILE -ErrorAction SilentlyContinue
+# v1.0.34-Hotfix8: Test psql with explicit PGPASSWORD via cmd /c
+# This is the most reliable way on Windows PowerShell 5.1
+function Test-PgConnection($password) {
+    # Write pgpass
+    "localhost:5432:*:postgres:$password" | Set-Content $pgPassFile -Force -Encoding ASCII
+    # Test using cmd /c to avoid PS env var issues
+    $result = & cmd.exe /c "psql -U postgres -h localhost -p 5432 -tAc ""SELECT 1;""" 2>&1
+    $code = $LASTEXITCODE
+    return @{ Code = $code; Output = $result }
+}
 
-    $test = & psql -U postgres -h localhost -p 5432 -tAc "SELECT 1;" 2>&1
-    if ($LASTEXITCODE -eq 0) {
+$passwords = @("postgres", "admin", "password", "123456", "12345678", "erp_password", "P@ssw0rd", "Postgres123", "root", "qwerty", "letmein", "changeme")
+foreach ($pw in $passwords) {
+    $r = Test-PgConnection $pw
+    if ($r.Code -eq 0) {
         $connected = $true
         $usedPassword = $pw
         Write-Ok "Connected with password: $pw"
@@ -159,11 +169,10 @@ if (-not $connected) {
     if ([string]::IsNullOrWhiteSpace($pw)) {
         Write-Fail "Password cannot be empty"
     }
-    "localhost:5432:*:postgres:$pw" | Set-Content $pgPassFile -Force
-    Remove-Item Env:\PGPASSWORD -ErrorAction SilentlyContinue
-    $test = & psql -U postgres -h localhost -p 5432 -tAc "SELECT 1;" 2>&1
-    if ($LASTEXITCODE -ne 0) {
+    $r = Test-PgConnection $pw
+    if ($r.Code -ne 0) {
         Write-Host ""
+        Write-Host "  Last error: $($r.Output)" -ForegroundColor Red
         Write-Fail "Connection failed. Check your password and try again."
     }
     $usedPassword = $pw
