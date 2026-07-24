@@ -99,13 +99,37 @@ if ($svc) {
 
 # Test
 Write-Step "Testing connection (no password)..."
-$env:PGPASSWORD = ""
+
+# v1.0.34-Hotfix9: Find psql (PATH often differs in Administrator mode)
+$psql = Get-Command psql -ErrorAction SilentlyContinue
+if (-not $psql) {
+    $PsqlPaths = @(
+        "C:\Program Files\PostgreSQL\17\bin\psql.exe",
+        "C:\Program Files\PostgreSQL\16\bin\psql.exe",
+        "C:\Program Files\PostgreSQL\15\bin\psql.exe",
+        "C:\Program Files (x86)\PostgreSQL\17\bin\psql.exe"
+    )
+    foreach ($p in $PsqlPaths) {
+        if (Test-Path $p) {
+            $env:Path = "$env:Path;$(Split-Path $p)"
+            $psql = Get-Command psql
+            Write-Step "Found psql at: $p"
+            break
+        }
+    }
+}
+if (-not $psql) {
+    Write-Warn "psql not found in PATH. Add C:\Program Files\PostgreSQL\17\bin to PATH"
+}
+
 Remove-Item Env:\PGPASSWORD -ErrorAction SilentlyContinue
 $test = & psql -U postgres -h localhost -p 5432 -tAc "SELECT 1;" 2>&1
 if ($LASTEXITCODE -eq 0) {
     Write-Ok "Connection works without password!"
 } else {
     Write-Warn "Test failed: $test"
+    Write-Host "    The pg_hba.conf is fixed, but psql test failed."
+    Write-Host "    Try running quickstart.ps1 from a non-Admin PowerShell."
 }
 
 Write-Host ""
