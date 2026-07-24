@@ -59,12 +59,34 @@ Write-Step "Testing PostgreSQL connection..."
 $test = & psql -U postgres -h localhost -p 5432 -tAc "SELECT 1;" 2>&1
 if ($LASTEXITCODE -ne 0) {
     Write-Warn "Cannot connect without password."
-    Write-Host "  Run this to fix:" -ForegroundColor Yellow
-    Write-Host "    notepad 'C:\Program Files\PostgreSQL\17\data\pg_hba.conf'" -ForegroundColor Cyan
-    Write-Host "  Change 'scram-sha-256' to 'trust' for 127.0.0.1/32 and ::1/128" -ForegroundColor Yellow
-    Write-Host "  Then: Restart-Service postgresql-x64-17" -ForegroundColor Yellow
     Write-Host ""
-    Write-Fail "Fix pg_hba.conf first."
+    Write-Host "  AUTO-FIX: Restarting PostgreSQL service to apply pg_hba.conf..." -ForegroundColor Cyan
+    $svc = Get-Service -Name "postgresql*" -ErrorAction SilentlyContinue | Select-Object -First 1
+    if ($svc) {
+        try {
+            Restart-Service $svc.Name -Force -ErrorAction Stop
+            Write-Ok "Service restarted. Waiting 3s..."
+            Start-Sleep 3
+        } catch {
+            Write-Warn "Cannot restart as non-admin. Run this in Administrator PowerShell:"
+            Write-Host "    Restart-Service $($svc.Name)" -ForegroundColor Yellow
+        }
+    }
+    # Test again
+    $test = & psql -U postgres -h localhost -p 5432 -tAc "SELECT 1;" 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host ""
+        Write-Warn "Still cannot connect. The pg_hba.conf needs editing."
+        Write-Host ""
+        Write-Host "  MANUAL FIX:" -ForegroundColor Yellow
+        Write-Host "    1. Open: C:\Program Files\PostgreSQL\17\data\pg_hba.conf" -ForegroundColor White
+        Write-Host "    2. Find lines with '127.0.0.1/32' and '::1/128'" -ForegroundColor White
+        Write-Host "    3. Change 'scram-sha-256' to 'trust'" -ForegroundColor White
+        Write-Host "    4. Save and run: Restart-Service postgresql-x64-17" -ForegroundColor White
+        Write-Host ""
+        Write-Fail "Fix pg_hba.conf and run again."
+    }
+    Write-Ok "Connected after restart!"
 }
 Write-Ok "PostgreSQL is up on :5432"
 
