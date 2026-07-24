@@ -119,12 +119,31 @@ if (-not $pgPort.TcpTestSucceeded) {
 Write-Ok "PostgreSQL is up on :5432"
 
 # 3) Test connection + create databases
-$env:PGPASSWORD = "postgres"
-$test = & psql -U postgres -h localhost -p 5432 -c "SELECT 1;" 2>&1
-if ($LASTEXITCODE -ne 0) {
-    Write-Warn "Cannot connect to PostgreSQL with user 'postgres' and password 'postgres'"
-    Write-Host "    Set your password: `$env:PGPASSWORD = 'YOUR_PASSWORD'"
-    Write-Fail "Connection failed"
+# v1.0.34-Hotfix5: Try multiple common passwords
+$env:PGPASSWORD = $null
+$passwords = @("postgres", "admin", "password", "123456", "erp_password")
+$connected = $false
+foreach ($pw in $passwords) {
+    $env:PGPASSWORD = $pw
+    $test = & psql -U postgres -h localhost -p 5432 -c "SELECT 1;" 2>&1
+    if ($LASTEXITCODE -eq 0) {
+        $connected = $true
+        Write-Ok "Connected with password: $pw"
+        break
+    }
+}
+if (-not $connected) {
+    Write-Warn "Cannot connect with common passwords."
+    Write-Host "    Please enter your PostgreSQL 'postgres' user password:"
+    $secure = Read-Host "Password" -AsSecureString
+    $bstr = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($secure)
+    $PGPASSWORD = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($bstr)
+    $env:PGPASSWORD = $PGPASSWORD
+    $test = & psql -U postgres -h localhost -p 5432 -c "SELECT 1;" 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        Write-Fail "Connection failed. Check your password."
+    }
+    Write-Ok "Connected"
 }
 
 # 4) Check if databases exist
