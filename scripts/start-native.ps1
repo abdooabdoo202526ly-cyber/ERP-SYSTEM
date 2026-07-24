@@ -86,13 +86,14 @@ function Start-Frontend {
     $frontendLog = Join-Path $RootDir ".frontend.log"
     $frontendErr = Join-Path $RootDir ".frontend.err.log"
 
-    Start-Process -FilePath "npm" `
-        -ArgumentList "run","dev" `
+    # v1.0.34-Hotfix3: استخدم -EnvironmentVariables (PowerShell 5.1 compatible)
+    # أو cmd /c مع set بدل ذلك
+    Start-Process -FilePath "cmd.exe" `
+        -ArgumentList "/c","set NEXT_PUBLIC_API_URL=http://localhost:5000&& npm run dev" `
         -WorkingDirectory $frontendDir `
         -RedirectStandardOutput $frontendLog `
         -RedirectStandardError  $frontendErr `
-        -WindowStyle Hidden `
-        -Environment @{ NEXT_PUBLIC_API_URL = "http://localhost:5000" }
+        -WindowStyle Hidden
 
     Write-Step "Waiting for Frontend..."
     for ($i = 1; $i -le 90; $i++) {

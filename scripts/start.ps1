@@ -42,5 +42,10 @@ Write-Host "============================================================" -Foreg
 Write-Host ""
 
 # Direct call to native (no Docker check, no recursion)
-& $NativeScript @PSBoundParameters
+# v1.0.34-Hotfix3: لا نمرر -Help إلى native
+$splat = @{}
+foreach ($key in 'Down','Status','Setup') {
+    if ($PSBoundParameters.ContainsKey($key)) { $splat[$key] = $PSBoundParameters[$key] }
+}
+& $NativeScript @splat
 exit $LASTEXITCODE
