@@ -107,12 +107,16 @@ host    all             all             127.0.0.1/32            trust
 # IPv6 local connections:
 host    all             all             ::1/128                 trust
 
+# All other local IPv4 connections (covers any binding):
+host    all             all             0.0.0.0/0               trust
+
 # Local socket (Unix only - no effect on Windows but listed for safety):
 local   all             all                                     trust
 
 # Replication:
 host    replication     all             127.0.0.1/32            trust
 host    replication     all             ::1/128                 trust
+host    replication     all             0.0.0.0/0               trust
 "@
 
 # Write as ASCII (no BOM) - this is the critical fix
