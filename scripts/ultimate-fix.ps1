@@ -107,16 +107,20 @@ host    all             all             127.0.0.1/32            trust
 # IPv6 local connections:
 host    all             all             ::1/128                 trust
 
-# All other local IPv4 connections (covers any binding):
+# ALL IPv4 addresses (matches any local IPv4):
 host    all             all             0.0.0.0/0               trust
+
+# ALL IPv6 addresses (matches any local IPv6 like ::1):
+host    all             all             ::/0                    trust
 
 # Local socket (Unix only - no effect on Windows but listed for safety):
 local   all             all                                     trust
 
-# Replication:
+# Replication (same rules for replication user):
 host    replication     all             127.0.0.1/32            trust
 host    replication     all             ::1/128                 trust
 host    replication     all             0.0.0.0/0               trust
+host    replication     all             ::/0                    trust
 "@
 
 # Write as ASCII (no BOM) - this is the critical fix
@@ -168,7 +172,8 @@ try {
 Write-Step "Waiting for PostgreSQL to be ready..."
 $ready = $false
 for ($i = 1; $i -le 30; $i++) {
-    $test = & $psql -U postgres -h localhost -p 5432 -tAc "SELECT 1;" 2>&1
+    # v1.0.34-Hotfix12: Use 127.0.0.1 explicitly to avoid IPv6 (::1) issues
+    $test = & $psql -U postgres -h 127.0.0.1 -p 5432 -tAc "SELECT 1;" 2>&1
     if ($LASTEXITCODE -eq 0) {
         $ready = $true
         Write-Ok "PostgreSQL ready after ${i}s"
@@ -182,7 +187,8 @@ if (-not $ready) {
 
 # ============ 4) Test connection (no password) ============
 Write-Step "Step 4/7: Testing connection (no password)..."
-$test = & $psql -U postgres -h localhost -p 5432 -tAc "SELECT version();" 2>&1
+# v1.0.34-Hotfix12: Force IPv4 (127.0.0.1) - avoids ::1 IPv6 issues
+$test = & $psql -U postgres -h 127.0.0.1 -p 5432 -tAc "SELECT version();" 2>&1
 if ($LASTEXITCODE -ne 0) {
     Write-Fail "Cannot connect: $test"
 }
@@ -191,13 +197,14 @@ Write-Ok "Connected: $($test.Substring(0, [Math]::Min(50, $test.Length)))..."
 # ============ 5) Create user and databases ============
 Write-Step "Step 5/7: Creating user and databases..."
 
-& $psql -U postgres -h localhost -p 5432 -c "DROP DATABASE IF EXISTS erp_system;" 2>&1 | Out-Null
-& $psql -U postgres -h localhost -p 5432 -c "DROP DATABASE IF EXISTS erp_events;" 2>&1 | Out-Null
-& $psql -U postgres -h localhost -p 5432 -c "DROP USER IF EXISTS erp_user;" 2>&1 | Out-Null
+# v1.0.34-Hotfix12: Use 127.0.0.1 to avoid IPv6 routing
+& $psql -U postgres -h 127.0.0.1 -p 5432 -c "DROP DATABASE IF EXISTS erp_system;" 2>&1 | Out-Null
+& $psql -U postgres -h 127.0.0.1 -p 5432 -c "DROP DATABASE IF EXISTS erp_events;" 2>&1 | Out-Null
+& $psql -U postgres -h 127.0.0.1 -p 5432 -c "DROP USER IF EXISTS erp_user;" 2>&1 | Out-Null
 
-& $psql -U postgres -h localhost -p 5432 -c "CREATE USER erp_user WITH PASSWORD 'erp_password' SUPERUSER;" 2>&1 | Out-Null
-& $psql -U postgres -h localhost -p 5432 -c "CREATE DATABASE erp_system OWNER erp_user;" 2>&1 | Out-Null
-& $psql -U postgres -h localhost -p 5432 -c "CREATE DATABASE erp_events OWNER erp_user;" 2>&1 | Out-Null
+& $psql -U postgres -h 127.0.0.1 -p 5432 -c "CREATE USER erp_user WITH PASSWORD 'erp_password' SUPERUSER;" 2>&1 | Out-Null
+& $psql -U postgres -h 127.0.0.1 -p 5432 -c "CREATE DATABASE erp_system OWNER erp_user;" 2>&1 | Out-Null
+& $psql -U postgres -h 127.0.0.1 -p 5432 -c "CREATE DATABASE erp_events OWNER erp_user;" 2>&1 | Out-Null
 Write-Ok "Created: erp_user + erp_system + erp_events"
 
 # ============ 6) Fix appsettings.json ============
