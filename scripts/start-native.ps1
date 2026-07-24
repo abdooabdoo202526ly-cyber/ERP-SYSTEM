@@ -153,6 +153,12 @@ Write-Host ""
 Write-Host "=== ERP-SYSTEM (Native, No Docker) ===" -ForegroundColor Cyan
 Write-Host ""
 
+# v1.0.34-Hotfix4: Self-heal appsettings.json (fix old 'neondb' if present)
+$FixScript = Join-Path $ScriptDir "fix-appsettings.ps1"
+if (Test-Path $FixScript) {
+    & $FixScript | Out-Null
+}
+
 Test-Postgres
 Start-Backend
 Start-Frontend
