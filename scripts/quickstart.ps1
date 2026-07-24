@@ -134,7 +134,7 @@ Write-Step "Using pgpass file: $pgPassFile"
 $connected = $false
 $usedPassword = $null
 
-$passwords = @("postgres", "admin", "password", "123456", "erp_password", "P@ssw0rd", "Postgres123")
+$passwords = @("postgres", "admin", "password", "123456", "12345678", "erp_password", "P@ssw0rd", "Postgres123", "root", "qwerty", "letmein")
 foreach ($pw in $passwords) {
     "localhost:5432:*:postgres:$pw" | Set-Content $pgPassFile -Force
     Remove-Item Env:\PGPASSWORD -ErrorAction SilentlyContinue
