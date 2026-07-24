@@ -119,32 +119,53 @@ if (-not $pgPort.TcpTestSucceeded) {
 Write-Ok "PostgreSQL is up on :5432"
 
 # 3) Test connection + create databases
-# v1.0.34-Hotfix5: Try multiple common passwords
-$env:PGPASSWORD = $null
+# v1.0.34-Hotfix6: Use .pgpass file to avoid password prompt issues
+$pgPassFile = Join-Path $env:USERPROFILE ".pgpass"
 $passwords = @("postgres", "admin", "password", "123456", "erp_password")
 $connected = $false
+$usedPassword = $null
+
+# Try each common password
 foreach ($pw in $passwords) {
-    $env:PGPASSWORD = $pw
+    # Write temp .pgpass
+    "localhost:5432:*:postgres:$pw" | Set-Content $pgPassFile -Force
+    chmod 600 $pgPassFile 2>$null
+    $env:PGPASSFILE = $pgPassFile
+    Remove-Item Env:\PGPASSWORD -ErrorAction SilentlyContinue
+
     $test = & psql -U postgres -h localhost -p 5432 -c "SELECT 1;" 2>&1
     if ($LASTEXITCODE -eq 0) {
         $connected = $true
+        $usedPassword = $pw
         Write-Ok "Connected with password: $pw"
         break
     }
 }
+
+# If none worked, ask user
 if (-not $connected) {
     Write-Warn "Cannot connect with common passwords."
-    Write-Host "    Please enter your PostgreSQL 'postgres' user password:"
-    $secure = Read-Host "Password" -AsSecureString
-    $bstr = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($secure)
-    $PGPASSWORD = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($bstr)
-    $env:PGPASSWORD = $PGPASSWORD
+    Write-Host ""
+    Write-Host "  Please enter your PostgreSQL 'postgres' user password." -ForegroundColor Yellow
+    Write-Host "  (Note: password is hidden, type it then press Enter)" -ForegroundColor Gray
+    Write-Host ""
+    $pw = Read-Host "Password"
+    "localhost:5432:*:postgres:$pw" | Set-Content $pgPassFile -Force
+    $env:PGPASSFILE = $pgPassFile
+    Remove-Item Env:\PGPASSWORD -ErrorAction SilentlyContinue
     $test = & psql -U postgres -h localhost -p 5432 -c "SELECT 1;" 2>&1
     if ($LASTEXITCODE -ne 0) {
+        Write-Host ""
         Write-Fail "Connection failed. Check your password."
     }
+    $usedPassword = $pw
     Write-Ok "Connected"
 }
+
+# Save password to env for this session (used by child processes)
+$env:PGPASSWORD = $usedPassword
+$env:ERP_PG_PASSWORD = $usedPassword  # backup
+Write-Step "Password saved for this session."
 
 # 4) Check if databases exist
 $dbs = & psql -U postgres -h localhost -p 5432 -tAc "SELECT datname FROM pg_database WHERE datname IN ('erp_system','erp_events')" 2>&1
