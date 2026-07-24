@@ -60,7 +60,33 @@ $test = & psql -U postgres -h localhost -p 5432 -tAc "SELECT 1;" 2>&1
 if ($LASTEXITCODE -ne 0) {
     Write-Warn "Cannot connect without password."
     Write-Host ""
-    Write-Host "  AUTO-FIX: Restarting PostgreSQL service to apply pg_hba.conf..." -ForegroundColor Cyan
+    Write-Host "  Reason: PostgreSQL pg_hba.conf still uses 'scram-sha-256' or" -ForegroundColor Yellow
+    Write-Host "  the service wasn't restarted after editing." -ForegroundColor Yellow
+    Write-Host ""
+
+    # v1.0.34-Hotfix10: Try to elevate to Administrator automatically
+    $isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+    if (-not $isAdmin) {
+        Write-Host "  Attempting to auto-elevate to Administrator..." -ForegroundColor Cyan
+        $ScriptPath = $MyInvocation.MyCommand.Path
+        try {
+            Start-Process powershell.exe -Verb RunAs -ArgumentList "-NoExit", "-ExecutionPolicy", "Bypass", "-File", "`"$ScriptPath`""
+            Write-Ok "New PowerShell opened as Administrator. Re-run quickstart.ps1 there."
+            Write-Host ""
+            Write-Host "  (Close this window and use the new Administrator window)" -ForegroundColor Yellow
+            exit 0
+        } catch {
+            Write-Warn "Auto-elevation failed. Please run as Administrator manually:"
+            Write-Host ""
+            Write-Host "    1. Right-click PowerShell → 'Run as administrator'" -ForegroundColor White
+            Write-Host "    2. cd '$RootDir'" -ForegroundColor White
+            Write-Host "    3. .\scripts\quickstart.ps1" -ForegroundColor White
+            Write-Host ""
+            Write-Fail "Run as Administrator"
+        }
+    }
+
+    # We are admin now, try restart
     $svc = Get-Service -Name "postgresql*" -ErrorAction SilentlyContinue | Select-Object -First 1
     if ($svc) {
         try {
@@ -68,10 +94,10 @@ if ($LASTEXITCODE -ne 0) {
             Write-Ok "Service restarted. Waiting 3s..."
             Start-Sleep 3
         } catch {
-            Write-Warn "Cannot restart as non-admin. Run this in Administrator PowerShell:"
-            Write-Host "    Restart-Service $($svc.Name)" -ForegroundColor Yellow
+            Write-Fail "Cannot restart service. Try: Restart-Service $($svc.Name)"
         }
     }
+
     # Test again
     $test = & psql -U postgres -h localhost -p 5432 -tAc "SELECT 1;" 2>&1
     if ($LASTEXITCODE -ne 0) {
