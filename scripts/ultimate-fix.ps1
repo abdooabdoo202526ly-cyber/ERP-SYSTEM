@@ -101,6 +101,11 @@ $newContent = @"
 
 # TYPE  DATABASE        USER            ADDRESS                 METHOD
 
+# Catch-all: any database, any user, any address, TRUST
+# (MUST be first to ensure it matches before specific rules)
+host    all             all             all                     trust
+local   all             all                                     trust
+
 # IPv4 local connections:
 host    all             all             127.0.0.1/32            trust
 
@@ -113,14 +118,8 @@ host    all             all             0.0.0.0/0               trust
 # ALL IPv6 addresses (matches any local IPv6 like ::1):
 host    all             all             ::/0                    trust
 
-# Local socket (Unix only - no effect on Windows but listed for safety):
-local   all             all                                     trust
-
-# Replication (same rules for replication user):
-host    replication     all             127.0.0.1/32            trust
-host    replication     all             ::1/128                 trust
-host    replication     all             0.0.0.0/0               trust
-host    replication     all             ::/0                    trust
+# Replication:
+host    replication     all             all                     trust
 "@
 
 # Write as ASCII (no BOM) - this is the critical fix
@@ -136,37 +135,24 @@ Write-Step "First bytes: $($firstBytes -join ' ') (should be 23=hash, NOT EF BB 
 # ============ 3) Restart PostgreSQL ============
 Write-Step "Step 3/7: Restarting PostgreSQL service..."
 
-# v1.0.34-Hotfix11: Use net stop/start for guaranteed restart
-try {
-    Write-Step "Stopping PostgreSQL (net stop)..."
-    & net.exe stop $pgService.Name 2>&1 | Out-Null
-    Start-Sleep 3
-    $svc = Get-Service $pgService.Name
-    if ($svc.Status -ne "Stopped") {
-        Write-Warn "Service not stopped, trying with -Force"
-        Stop-Service $pgService.Name -Force -ErrorAction SilentlyContinue
-        Start-Sleep 3
-    }
-    Write-Ok "Stopped"
+# v1.0.34-Hotfix13: Use pg_ctl restart (more reliable than net stop/start)
+$pgCtl = Join-Path (Split-Path $psql) "pg_ctl.exe"
+Write-Step "Using pg_ctl: $pgCtl"
+Write-Step "Data dir: $pgData"
 
-    Write-Step "Starting PostgreSQL (net start)..."
-    & net.exe start $pgService.Name 2>&1 | Out-Null
-    Start-Sleep 3
-    $svc = Get-Service $pgService.Name
-    if ($svc.Status -ne "Running") {
-        Write-Warn "Service not running, trying Start-Service"
-        Start-Service $pgService.Name -ErrorAction SilentlyContinue
-        Start-Sleep 3
-    }
-    Write-Ok "Started (status: $((Get-Service $pgService.Name).Status))"
+try {
+    & $pgCtl -D $pgData restart -w -m fast 2>&1 | Out-Null
+    Write-Ok "pg_ctl restart completed"
 } catch {
-    Write-Warn "PowerShell restart failed, using net command directly..."
+    Write-Warn "pg_ctl failed, trying net stop/start..."
     & net.exe stop $pgService.Name 2>&1 | Out-Null
     Start-Sleep 3
     & net.exe start $pgService.Name 2>&1 | Out-Null
     Start-Sleep 3
-    Write-Ok "Restarted via net command"
+    Write-Ok "Restarted via net"
 }
+
+Start-Sleep 3
 
 # Wait for ready
 Write-Step "Waiting for PostgreSQL to be ready..."
